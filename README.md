@@ -24,7 +24,7 @@ output: index.html
 sequenceDiagram
 	participant B as 🗔 Browser
 	participant X
-	B->X: HTTP requests, compute, DOM changes, render, etc
+	B->X: HTTP requests, compute, DOM changes ...
 ```
 <script>
 // Hide X and lines
