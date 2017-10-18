@@ -14,7 +14,7 @@ output: index.html
 
 --
 
-## What is a worker ?
+## What is a worker?
 
 --
 
@@ -72,7 +72,7 @@ sequenceDiagram
 
 > Running background scripts independently of any UI
 
-- Web Workers <small class="fragment">since 2010, usefull to perform heavy computation, ex: pdfjs</small>
+- Web Workers <small class="fragment">since 2010, useful to perform heavy computation, ex: pdfjs</small>
 - Shared Workers <small class="fragment">since 2010, ~~removed from webkit in 2015~~</small>
 - Service Workers <small class="fragment">since 2014, foundation of Progressive Web Application</small>
 
@@ -86,7 +86,7 @@ sequenceDiagram
 
 ### Offline & 'Off browser'
 
-> A service worker act as proxy between your web application, the browser and the network
+> A service worker acts as proxy between your web application, the browser and the network
 
 - Offline access
 - Push notifications
@@ -100,9 +100,9 @@ sequenceDiagram
 
 support: chrome, mozilla, android, opera, edge, safari
 
-- Promises <small class="fragment">construction to executes code that will resolve later</small>
+- Promises <small class="fragment">construction to execute code that will resolve later</small>
 - postMessage <small class="fragment">method to exchange messages and objects between contexts</small>
-- fetch <small class="fragment">function to make simple HTTP request, successor of XHR</small>
+- fetch <small class="fragment">function to make simple HTTP requests, successor of XHR</small>
 
 [✓ Is Service Worker Ready](https://jakearchibald.github.io/isserviceworkerready)
 
@@ -110,7 +110,7 @@ support: chrome, mozilla, android, opera, edge, safari
 
 ### Runs under conditions
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 - HTTPS only, no private browsing <small class="fragment">for security reason</small>
 - No DOM access <small class="fragment">no `document`, nor `window` `navigator`</small>
@@ -120,13 +120,13 @@ support: chrome, mozilla, android, opera, edge (developement), safari (developem
 
 --
 
-## How to use it ?
+## How to use it?
 
 --
 
 ### Registering
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 `main.js`
 
@@ -143,7 +143,7 @@ if (navigator.serviceWorker)
 
 ### First install
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 `service-worker.js`
 
@@ -172,7 +172,7 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 
 ### Upgrade process
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 `service-worker.js`
 
@@ -199,14 +199,14 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 
 --
 
-### Emmited events
+### Emitted events
 
 State events: `install`, `updatefound`, `activate` or `statechange`
 
 - fetch <small class="fragment">intercepted an HTTP request (made by main thread)</small>
-- message <small class="fragment">recieved a message via postMessage</small>
-- push <small class="fragment">recieved a push notification</small>
-- sync <small class="fragment">started defered synchronisation (stable connectivity)</small>
+- message <small class="fragment">received a message via postMessage</small>
+- push <small class="fragment">received a push notification</small>
+- sync <small class="fragment">started defered synchronization (stable connectivity)</small>
 
 [🗱 Service Worker events](https://developer.mozilla.org/fr/docs/Web/API/ServiceWorker)
 
@@ -307,7 +307,7 @@ interface Cache {
 
 ### Offline basics
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 `service-worker.js`
 
@@ -328,7 +328,7 @@ self.addEventListener('install', event =>
 
 ### Cache first, fallback to network
 
-support: chrome, mozilla, android, opera, edge (developement), safari (developement)
+support: chrome, mozilla, android, opera, edge (development), safari (development)
 
 `service-worker.js` 
 
@@ -372,7 +372,7 @@ navigator.serviceWorker.addEventListener('message', event =>
 
 --
 
-## Recieve notifications
+## Receive notifications
 
 --
 
