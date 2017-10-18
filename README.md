@@ -204,8 +204,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 State events: `install`, `updatefound`, `activate` or `statechange`
 
 - fetch <small class="fragment">intercepted an HTTP request (made by main thread)</small>
-- message <small class="fragment">recieved a message via postMessage</small>
-- push <small class="fragment">recieved a push notification</small>
+- message <small class="fragment">received a message via postMessage</small>
+- push <small class="fragment">received a push notification</small>
 
 [🗱 Service Worker events](https://developer.mozilla.org/fr/docs/Web/API/ServiceWorker)
 
