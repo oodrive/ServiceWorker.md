@@ -109,8 +109,8 @@ img.badge {
   font-size: 1.2rem;
 }
 .slide-content svg.icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 3rem;
+  height: 3rem;
 }
 .slide-content svg.icon.developement {
   opacity: .25;
@@ -412,8 +412,7 @@ code pre {
 }
 
 div.support {
-  float: right;
-  margin: calc(1em - 1rem) 0 0;
+  text-align: right;
 }
 div.support .icon {
   vertical-align: middle;

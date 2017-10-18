@@ -116,8 +116,8 @@ img.badge {
   font-size: 1.2rem;
 }
 .slide-content svg.icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 3rem;
+  height: 3rem;
 }
 .slide-content svg.icon.developement {
   opacity: .25;
@@ -419,8 +419,7 @@ code pre {
 }
 
 div.support {
-  float: right;
-  margin: calc(1em - 1rem) 0 0;
+  text-align: right;
 }
 div.support .icon {
   vertical-align: middle;
@@ -801,7 +800,6 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 <li>fetch <small class="fragment">intercepted an HTTP request (made by main thread)</small></li>
 <li>message <small class="fragment">recieved a message via postMessage</small></li>
 <li>push <small class="fragment">recieved a push notification</small></li>
-<li>sync <small class="fragment">started defered synchronisation (stable connectivity)</small></li>
 </ul>
 <p><a href="https://developer.mozilla.org/fr/docs/Web/API/ServiceWorker">🗱 Service Worker events</a></p>
 </section>
@@ -894,15 +892,6 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
     <div class="slide-wrapper">
       <div class="slide hidden" id="slide-22">
         <div data-id="22" class="slide-overlay"></div>
-        <section class="slide-content"><h3 id="cache-crud-interface">Cache CRUD interface</h3>
-<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="storage type js"><span>interface</span></span><span>&nbsp;Cache&nbsp;</span><span class="meta brace curly js"><span>{</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>add</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span class="keyword operator void js"><span>void</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>addAll</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>requests</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Request</span><span class="meta brace square js"><span>[</span><span>]</span></span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta brace square js"><span>[</span><span>]</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span class="keyword operator void js"><span>void</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>match</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;options</span><span class="keyword operator js"><span>?</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span>Response</span><span class="keyword operator bitwise js"><span>|</span></span><span class="constant language js"><span>undefined</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>matchAll</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>?</span><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;options</span><span class="keyword operator js"><span>?</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span>Response</span><span class="meta brace square js"><span>[</span><span>]</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>keys</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>?</span><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;options</span><span class="keyword operator js"><span>?</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span>Request</span><span class="meta brace square js"><span>[</span><span>]</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>put</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;response</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Response</span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span class="keyword operator void js"><span>void</span></span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword operator delete js"><span>delete</span></span><span class="meta brace round js"><span>(</span></span><span>request</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Request</span><span class="keyword operator bitwise js"><span>|</span></span><span>string</span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;options</span><span class="keyword operator js"><span>?</span></span><span class="meta brace round js"><span>)</span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;Promise</span><span class="keyword operator comparison js"><span>&lt;</span></span><span>boolean</span><span class="keyword operator comparison js"><span>&gt;</span></span></span></div><div class="line"><span class="source js"><span class="meta brace curly js"><span>}</span></span></span></div><div class="line"><span class="source js"><span class="comment line double-slash js"><span class="punctuation definition comment js"><span>//</span></span><span>&nbsp;options</span><span>&nbsp;</span></span></span></div><div class="line"><span class="source js"><span class="comment line double-slash js"><span class="punctuation definition comment js"><span>//</span></span><span>&nbsp;{&nbsp;ignoreSearch?:&nbsp;boolean,&nbsp;ignoreMethod?:&nbsp;boolean,&nbsp;ignoreVary?:&nbsp;boolean&nbsp;}</span></span></span></div></pre></code></pre>
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Cache">🖫 Cache API</a></p>
-</section>
-      </div>
-    </div>
-    <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-23">
-        <div data-id="23" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="offline-basics">Offline basics</h3>
 <p>support: chrome, mozilla, android, opera, edge (developement), safari (developement)</p>
 <p><code>service-worker.js</code></p>
@@ -912,8 +901,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-24">
-        <div data-id="24" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-23">
+        <div data-id="23" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="cache-first-fallback-to-network">Cache first, fallback to network</h3>
 <p>support: chrome, mozilla, android, opera, edge (developement), safari (developement)</p>
 <p><code>service-worker.js</code> </p>
@@ -923,47 +912,28 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-24">
+        <div data-id="24" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="recieve-notifications">Recieve notifications</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
       <div class="slide hidden" id="slide-25">
         <div data-id="25" class="slide-overlay"></div>
-        <section class="slide-content"><h2 id="talk-with-the-browser">Talk with the browser</h2>
+        <section class="slide-content"><h3 id="web-push-notification">Web push notification</h3>
+<ul>
+<li>fully integrated and standardized with HTML5</li>
+<li>used to be complex (clunky vendor specific implementations)</li>
+<li>display with native notifications UI</li>
+</ul>
+<p><a href=""></a></p>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
       <div class="slide hidden" id="slide-26">
         <div data-id="26" class="slide-overlay"></div>
-        <section class="slide-content"><h3 id="send-message-and-get-response-back">Send message and get response back</h3>
-<p>support: chrome, mozilla, android, opera, edge, safari</p>
-<p><code>service-worker.js</code></p>
-<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="storage modifier js"><span>const</span></span><span>&nbsp;</span><span class="constant other js"><span>channel</span></span><span>&nbsp;</span><span class="keyword operator assignment js"><span>=</span></span><span>&nbsp;</span><span class="meta class instance constructor"><span class="keyword operator new js"><span>new</span></span><span>&nbsp;</span><span class="entity name type instance js"><span>MessageChannel</span></span></span><span class="meta brace round js"><span>(</span><span>)</span></span></span></div><div class="line"><span class="source js"><span class="meta function-call js"><span class="entity name function js"><span>postMessage</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta brace curly js"><span>{</span></span><span>&nbsp;reply</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="variable other object js"><span>channel</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>port2</span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta brace square js"><span>[</span></span><span class="variable other object js"><span>channel</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>port2</span></span><span class="meta brace square js"><span>]</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
-<p><code>main.js</code></p>
-<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>serviceWorker</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>addEventListener</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>message</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>event</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>event</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="support constant dom js"><span>data</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>reply</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>postMessage</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted template js"><span class="punctuation definition string begin js"><span>`</span></span><span>Talk&nbsp;back&nbsp;...</span><span class="punctuation definition string end js"><span>`</span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
-<p><a href="http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html">💬 Worker messaging</a></p>
-</section>
-      </div>
-    </div>
-    <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-27">
-        <div data-id="27" class="slide-overlay"></div>
-        <section class="slide-content"><h2 id="recieve-notifications">Recieve notifications</h2>
-</section>
-      </div>
-    </div>
-    <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-28">
-        <div data-id="28" class="slide-overlay"></div>
-        <section class="slide-content"><h3 id="web-push-notification">Web push notification</h3>
-<ul>
-<li>fully integrated and standardized with HTML5</li>
-<li>used to be complex (clunky first implementations)</li>
-<li>display with native notifications UI</li>
-</ul>
-</section>
-      </div>
-    </div>
-    <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-29">
-        <div data-id="29" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="pushmanager">pushManager</h3>
 <p><code>main.js</code></p>
 <pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="keyword control js"><span>if</span></span><span>&nbsp;</span><span class="meta brace round js"><span>(</span></span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>serviceWorker</span></span><span class="meta brace round js"><span>)</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>serviceWorker</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>register</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/service-worker.js</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta brace curly js"><span>{</span></span><span>&nbsp;scope</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>then</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>registration</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span><span class="variable other object js"><span>registration</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>pushManager</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>subscribe</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
@@ -974,8 +944,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden  " id="slide-30">
-        <div data-id="30" class="slide-overlay"></div>
+      <div class="slide hidden  " id="slide-27">
+        <div data-id="27" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="service-worker-life-cycle">Service Worker life cycle</h3>
 <pre><code class="lang-mermaid">sequenceDiagram
     participant B as 🗔 Browser
@@ -1007,13 +977,12 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-31">
-        <div data-id="31" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-28">
+        <div data-id="28" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="and-more-">And more!</h2>
 <ul>
 <li>background sync</li>
 <li>periodic background sync</li>
-<li>geo fencing</li>
 <li>background fetch</li>
 </ul>
 <p><a href="https://github.com/WICG/background-fetch">🐶 Background-fetching proposal</a></p>
@@ -1021,8 +990,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-32">
-        <div data-id="32" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-29">
+        <div data-id="29" class="slide-overlay"></div>
         <section class="slide-content"><h1 id="thanks-">Thanks!</h1>
 <ul>
 <li>Writen in <a href="https://github.com/adriengibrat/ServiceWorker.md">Markdown</a> with <a href="https://www.npmjs.com/package/cleaver">Cleaver</a></li>
@@ -1038,8 +1007,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden author-slide" id="slide-33">
-        <div data-id="33" class="slide-overlay"></div>
+      <div class="slide hidden author-slide" id="slide-30">
+        <div data-id="30" class="slide-overlay"></div>
         <section class="slide-content"><div class="author">
   <h1 class="name">Adrien Gibrat</h1>
     <h3 class="url">

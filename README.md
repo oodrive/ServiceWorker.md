@@ -206,7 +206,6 @@ State events: `install`, `updatefound`, `activate` or `statechange`
 - fetch <small class="fragment">intercepted an HTTP request (made by main thread)</small>
 - message <small class="fragment">recieved a message via postMessage</small>
 - push <small class="fragment">recieved a push notification</small>
-- sync <small class="fragment">started defered synchronisation (stable connectivity)</small>
 
 [🗱 Service Worker events](https://developer.mozilla.org/fr/docs/Web/API/ServiceWorker)
 
@@ -285,26 +284,6 @@ self.clients.claim()
 
 --
 
-### Cache CRUD interface
-
-```javascript
-interface Cache {
-	add(request: Request|string): Promise<void>
-	addAll(requests: Request[]|string[]): Promise<void>
-	match(request: Request|string, options?): Promise<Response|undefined>
-	matchAll(request?: Request|string, options?): Promise<Response[]>
-	keys(request?: Request|string, options?): Promise<Request[]>
-	put(request: Request|string, response: Response): Promise<void>
-	delete(request: Request|string, options?): Promise<boolean>
-}
-// options
-// { ignoreSearch?: boolean, ignoreMethod?: boolean, ignoreVary?: boolean }
-```
-
-[🖫 Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)
-
---
-
 ### Offline basics
 
 support: chrome, mozilla, android, opera, edge (developement), safari (developement)
@@ -345,33 +324,6 @@ self.addEventListener('fetch', event =>
 
 --
 
-## Talk with the browser
-
---
-
-### Send message and get response back
-
-support: chrome, mozilla, android, opera, edge, safari
-
-`service-worker.js`
-
-```javascript
-const channel = new MessageChannel()
-postMessage({ reply: channel.port2 }, [channel.port2])
-```
-
-`main.js`
-
-```javascript
-navigator.serviceWorker.addEventListener('message', event => 
-	event.data.reply.postMessage(`Talk back ...`)
-)
-```
-
-[💬 Worker messaging](http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html)
-
---
-
 ## Recieve notifications
 
 --
@@ -379,8 +331,10 @@ navigator.serviceWorker.addEventListener('message', event =>
 ### Web push notification
 
 - fully integrated and standardized with HTML5
-- used to be complex (clunky first implementations)
+- used to be complex (clunky vendor specific implementations)
 - display with native notifications UI
+
+[]()
 
 --
 
@@ -443,7 +397,6 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 
 - background sync
 - periodic background sync
-- geo fencing
 - background fetch
 
 [🐶 Background-fetching proposal](https://github.com/WICG/background-fetch)
