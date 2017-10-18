@@ -166,6 +166,7 @@ const initSupport = (selector, start = 'support: ') => {
           .slice(start.length).trim().split(',')
           .map(browser => {
             const [, icon, className] = browser.trim().match(/^(\w+)(?:\s*\((\w+)\))?\s*$/)
+            console.log(icon, className)
             return `<svg class="icon ${className || ''}" role="img"><use xlink:href="#${icon}" /></svg>`
           })
           .join(' ') } </div>`

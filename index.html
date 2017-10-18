@@ -119,7 +119,7 @@ img.badge {
   width: 3rem;
   height: 3rem;
 }
-.slide-content svg.icon.development {
+.slide-content svg.icon.developement {
   opacity: .25;
 }
 .slide-content svg.icon.consideration {
@@ -923,11 +923,11 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
         <div data-id="25" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="web-push-notification">Web push notification</h3>
 <ul>
-<li>fully integrated and standardized with HTML5</li>
-<li>used to be complex (clunky vendor specific implementations)</li>
-<li>display with native notifications UI</li>
+<li>Fully integrated and standardized with HTML5</li>
+<li>Used to be complex (vendor specific implementations)</li>
+<li>Display with native notifications UI</li>
 </ul>
-<p><a href=""></a></p>
+<p><a href="https://developers.google.com/web/fundamentals/codelabs/push-notifications/">🚨 Push Notifications in Web App</a></p>
 </section>
       </div>
     </div>
@@ -935,10 +935,11 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       <div class="slide hidden" id="slide-26">
         <div data-id="26" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="pushmanager">pushManager</h3>
+<p>support: chrome, mozilla, android, opera, edge (developement), safari (developement)</p>
 <p><code>main.js</code></p>
 <pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="keyword control js"><span>if</span></span><span>&nbsp;</span><span class="meta brace round js"><span>(</span></span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>serviceWorker</span></span><span class="meta brace round js"><span>)</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>serviceWorker</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>register</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/service-worker.js</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta brace curly js"><span>{</span></span><span>&nbsp;scope</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>then</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>registration</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span><span class="variable other object js"><span>registration</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>pushManager</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>subscribe</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
 <p><code>manifest.json</code></p>
-<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="meta brace curly js"><span>{</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword operator spread js"><span>...</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>gcm_sender_id</span><span class="punctuation definition string end js"><span>&quot;</span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>&lt;Your&nbsp;Sender&nbsp;ID&nbsp;Here&gt;</span><span class="punctuation definition string end js"><span>&quot;</span></span></span></span></div><div class="line"><span class="source js"><span class="meta brace curly js"><span>}</span></span></span></div></pre></code></pre>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="meta brace curly js"><span>{</span></span><span>&nbsp;</span><span class="keyword operator spread js"><span>...</span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>gcm_sender_id</span><span class="punctuation definition string end js"><span>&quot;</span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>&lt;Your&nbsp;Sender&nbsp;ID&nbsp;Here&gt;</span><span class="punctuation definition string end js"><span>&quot;</span></span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span></span></div></pre></code></pre>
 <p><a href="https://developers.google.com/web/updates/2015/03/push-notifications-on-the-open-web">📲 Web Push Notifications</a></p>
 </section>
       </div>
@@ -981,9 +982,9 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
         <div data-id="28" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="and-more-">And more!</h2>
 <ul>
-<li>background sync</li>
-<li>periodic background sync</li>
-<li>background fetch</li>
+<li>Background sync</li>
+<li>Periodic background sync</li>
+<li>Background fetch</li>
 </ul>
 <p><a href="https://github.com/WICG/background-fetch">🐶 Background-fetching proposal</a></p>
 </section>
@@ -1025,7 +1026,6 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 
 
 
-    <script async src="http://localhost:35729/livereload.js"></script>
 
   <script type="text/javascript"src="theme/mermaid.min.js"></script>
 
@@ -1198,6 +1198,7 @@ const initSupport = (selector, start = 'support: ') => {
           .slice(start.length).trim().split(',')
           .map(browser => {
             const [, icon, className] = browser.trim().match(/^(\w+)(?:\s*\((\w+)\))?\s*$/)
+            console.log(icon, className)
             return `<svg class="icon ${className || ''}" role="img"><use xlink:href="#${icon}" /></svg>`
           })
           .join(' ') } </div>`

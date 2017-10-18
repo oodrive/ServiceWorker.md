@@ -330,15 +330,17 @@ self.addEventListener('fetch', event =>
 
 ### Web push notification
 
-- fully integrated and standardized with HTML5
-- used to be complex (clunky vendor specific implementations)
-- display with native notifications UI
+- Fully integrated and standardized with HTML5
+- Used to be complex (vendor specific implementations)
+- Display with native notifications UI
 
-[]()
+[🚨 Push Notifications in Web App](https://developers.google.com/web/fundamentals/codelabs/push-notifications/)
 
 --
 
 ### pushManager
+
+support: chrome, mozilla, android, opera, edge (developement), safari (developement)
 
 `main.js`
 
@@ -350,10 +352,7 @@ if (navigator.serviceWorker)
 
 `manifest.json`
 ```javascript
-{
-	...
-  "gcm_sender_id": "<Your Sender ID Here>"
-}
+{ ..., "gcm_sender_id": "<Your Sender ID Here>" }
 ```
 
 [📲 Web Push Notifications](https://developers.google.com/web/updates/2015/03/push-notifications-on-the-open-web)
@@ -395,9 +394,9 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 
 ## And more!
 
-- background sync
-- periodic background sync
-- background fetch
+- Background sync
+- Periodic background sync
+- Background fetch
 
 [🐶 Background-fetching proposal](https://github.com/WICG/background-fetch)
 
