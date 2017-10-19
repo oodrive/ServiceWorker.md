@@ -1,0 +1,1399 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Service Worker</title>
+  <style type="text/css">
+    @font-face {
+  font-family: 'Inconsolata';
+  src: local('Inconsolata Regular'), url(theme/font/inconsonlata.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans'), local('NotoSans'), url(theme/font/notosans.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Hind';
+  src: local('Hind Light'), local('Hind-Light'), url(theme/font/hind.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Symbola';
+  src: url('theme/font/Symbola_hint.ttf') format('truetype');
+}
+
+/* Theme Styles */
+body {
+  font-family: 'Noto Sans', 'Symbola', sans-serif;
+  font-weight: 300;
+  font-size: 150%;
+  color: #000;
+}
+
+.center {
+  text-align: center;
+}
+
+img.badge {
+  height: 128px;
+  width: 128px !important;
+  border-radius: 50% !important;
+}
+
+/* The following is needed for the ESC overview slide selection */
+.slides {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.slides.active .slide:not(.hidden) {
+  border: 22px solid red;
+}
+
+.slide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  cursor: pointer;
+  display: none;
+}
+
+.slides.active .slide:hover .slide-overlay::before {
+  content: '▶';
+  text-align: center;
+  line-height: 300px;
+  font-size: 200px;
+  color: #fff;
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.slides.active .slide:hover .slide-overlay{
+  display: block;
+  background: rgba(0,0,0,0.5);
+}
+.slide-wrapper {
+  margin: 7px;
+  transition: all 250ms;
+}
+
+/* Presentation Styles */
+.slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 2rem;
+  z-index: 1;
+  overflow: hidden;
+  box-sizing: border-box;
+  background-color: #FFF;
+}
+
+.slide-content {
+  z-index: 2;
+  opacity: 1;
+  max-width: 85vw;
+  max-height: 85vh;
+  margin: 0 auto 0;
+  font-size: 200%;
+  font-weight: 200;
+  line-height: 1.375;
+  overflow: hidden;
+}
+
+.slide-content svg[id^=mermaid] {
+  margin: auto;
+	display: block;
+  max-width: 70%;
+  font-size: 1.2rem;
+}
+.slide-content svg.icon {
+  width: 3rem;
+  height: 3rem;
+}
+.slide-content svg.icon.development {
+  opacity: .25;
+}
+.slide-content svg.icon.consideration {
+  filter: grayscale(100%);
+  opacity: .25;
+}
+.slide-content img {
+  width: 100%;
+  border-radius: 3px;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 3;
+}
+
+.controls .overview {
+  display: inline-block;
+  float: left;
+  color: #C7C7C7;
+  margin-right: 15px;
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 30px;
+  cursor: pointer;
+}
+.controls .overview:hover {
+  color: #41b6e8;
+}
+.controls .arrow {
+  float: left;
+  height: 0;
+  width: 0;
+  margin-right: 15px;
+  border: 15px solid #C7C7C7;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.controls .prev {
+  border-top-color: transparent;
+  border-right-width: 25px;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-left-width: 0;
+}
+
+.controls .next {
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-right-width: 0;
+  border-bottom-color: transparent;
+  border-left-width: 25px;
+}
+
+.controls .prev:hover {
+  border-right-color: #41b6e8;
+  cursor: pointer;
+}
+
+.controls .next:hover {
+  border-left-color: #41b6e8;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3 {
+  margin: 1rem 0;
+  font-family: 'Hind', sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 300%;
+  text-align: center;
+}
+
+h2 {
+  font-size: 200%;
+  font-weight: 200;
+  text-align: center;
+  margin-top: 2em;
+  color: #41b6e8;
+}
+
+h3 {
+  font-size: 140%;
+  padding-bottom: 1rem;
+  border-bottom: 1px ridge currentColor;
+}
+
+ul {
+  padding-left: 6rem;
+}
+
+blockquote {
+  padding-left: 20px;
+  margin-left: 0;
+  background: #efefef;
+  border-left: 5px solid #41b6e8;
+  border-radius: 0 3px 3px 0;
+}
+
+blockquote p {
+  padding: .5em;
+  color: #000;
+}
+
+small {
+  font-size: 60%;
+}
+
+.left {
+  float: left;
+  width: 48%;
+}
+
+.right {
+  float: right;
+  width: 48%;
+}
+
+.float-right {
+  float: right;
+}
+
+.author h1 {
+  margin: 2em 0 1em;
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  border: none;
+}
+
+a {
+  word-break: break-all;
+  text-decoration: none;
+  color: #41b6e8;
+}
+
+hr {
+  border: 1px solid #41b6e8;
+}
+
+
+table td,
+table th {
+  padding-right: 3em;
+  text-align: left;
+}
+
+.progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  z-index: 2;
+}
+
+.progress-bar {
+  height: 3px;
+  width: 0;
+  background-color: red;
+  -webkit-transition: width .15s ease-out;
+     -moz-transition: width .15s ease-out;
+       -o-transition: width .15s ease-out;
+          transition: width .15s ease-out;
+}
+
+.hidden,
+.slide-content svg[id^=mermaid].hidden {
+  display: none;
+}
+
+/* Code Highlighting */
+
+.editor .wrap-guide {
+  background: rgba(255, 255, 255, 0.1);
+}
+.editor .indent-guide {
+  color: rgba(255, 255, 255, 0.15);
+}
+.editor,
+.editor .gutter {
+  background-color: #282828;
+  color: #F8F8F2;
+}
+.editor.is-focused .cursor {
+  border-color: #F8F8F0;
+}
+.editor.is-focused .selection .region {
+  background-color: #49483E;
+}
+.editor.is-focused .line-number.cursor-line-no-selection {
+  background-color: #49483E;
+}
+.editor .invisible-character {
+  color: rgba(215, 215, 215, 0.15);
+}
+.editor .comment {
+  color: #75715E;
+}
+.editor .string {
+  color: #E6DB74;
+}
+.editor .constant.numeric {
+  color: #AE81FF;
+}
+.editor .constant.language {
+  color: #AE81FF;
+}
+.editor .constant.character,
+.editor .constant.other {
+  color: #AE81FF;
+}
+.editor .keyword {
+  color: #F92672;
+}
+.editor .storage {
+  color: #F92672;
+}
+.editor .storage.type {
+  font-style: italic;
+  color: #66D9EF;
+}
+.editor .entity.name.class {
+  text-decoration: underline;
+  color: #A6E22E;
+}
+.editor .entity.other.inherited-class {
+  font-style: italic;
+  text-decoration: underline;
+  color: #A6E22E;
+}
+.editor .entity.name.function {
+  color: #A6E22E;
+}
+.editor .entity.name.instance {
+  color: #66D9EF;
+}
+.editor .variable.parameter {
+  font-style: italic;
+  color: #FD971F;
+}
+.editor .entity.name.tag {
+  color: #F92672;
+}
+.editor .entity.other.attribute-name {
+  color: #A6E22E;
+}
+.editor .support.function {
+  color: #66D9EF;
+}
+.editor .support.constant {
+  color: #66D9EF;
+}
+.editor .support.type,
+.editor .support.class {
+  font-style: italic;
+  color: #66D9EF;
+}
+.editor .invalid {
+  color: #F8F8F0;
+  background-color: #F92672;
+}
+.editor .invalid.deprecated {
+  color: #F8F8F0;
+  background-color: #AE81FF;
+}
+.editor .class.jade {
+  color: #AE81FF;
+}
+
+code pre {
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  font-family: 'Inconsolata';
+  font-weight: 400;
+  overflow: hidden;
+  font-size: 80%;
+  line-height: 1.2;
+}
+
+div.support {
+  text-align: right;
+}
+div.support .icon {
+  vertical-align: middle;
+}
+
+p:last-of-type a {
+  position: absolute;
+  bottom: 2rem;
+}
+
+rect.actor {
+  fill: white;
+}
+
+/* Second participant */
+g:nth-child(4) rect.actor {
+  stroke: green;
+}
+
+.messageLine1,
+marker[id$=-crosshead] path {
+  fill: lightgrey;
+  stroke: lightgrey;
+}
+.messageLine1 {
+  animation: dash 200s linear;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -2000;
+  }
+}
+
+/* Responsiveness */
+@media (max-width: 850px) {
+  body {
+    font-size: 70%;
+  }
+
+  .slide {
+    padding: 50px;
+  }
+  p:last-of-type a {
+    bottom: 60px;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 3px;
+  }
+
+  .prev,
+  .prev:hover {
+    border-right-color: rgba(135, 135, 135, .5);
+  }
+
+  .next,
+  .next:hover {
+    border-left-color: rgba(135, 135, 135, .5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    overflow: hidden;
+    font-size: 50%;
+  }
+
+  .slide {
+    padding: 10px;
+  }
+  p:last-of-type a {
+    bottom: 15px;
+  }
+  .slide-content {
+    height: 340px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .hidden {
+    display: block;
+  }
+
+  html {
+    height: 100%;
+    width: 100%;
+    overflow: visible;
+  }
+
+  body {
+    float: none !important;
+    padding: 0;
+    margin: 0 auto !important;
+    overflow: visible;
+    background: none !important;
+    border: 0;
+  }
+
+  .progress,
+  .controls {
+    display: none;
+  }
+
+  .slide-wrapper {
+    width: 100%;
+    height: 21cm;
+    margin: 0;
+    page-break-before: always;
+    page-break-inside: avoid;
+    page-break-after: always;
+  }
+
+  .slide {
+    position: relative;
+    height: 100%;
+    padding: 4rem;
+  }
+
+  .slide-content {
+    margin-top: 0;
+    margin-bottom: 40px;
+    overflow: visible;
+  }
+
+  p:last-of-type a {
+    bottom: -30px;
+  }
+}
+
+.slide {
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  background-size: 20%;
+  background-origin: content-box;
+  background-image: url(theme/img/logo.png);
+}
+
+#slide-1 {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-origin: border-box;
+  background-image: url(theme/img/partners.png);
+}
+#slide-1 img { display: none; }
+
+#slide-2 h1 {
+  margin-top: 1em;
+  text-shadow: 1px 1px 1px #000;
+}
+
+#slide-2 h2 {
+  color: #41b6e8;
+  margin-top: 1em;
+}
+
+.author-slide .slide-content {
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 40%;
+  background-origin: border-box;
+  background-image: url(theme/img/oodrive.png);
+  padding-bottom: 15rem;
+}
+
+.author-slide .url a,
+.author-slide .email a {
+  color: #005898;
+}
+
+img[alt="partners"] {
+  display: block;
+  height: 85vh;
+  width: 85vh;
+  margin: -1em auto;
+}
+
+img[alt="feedback"] {
+  display: block;
+  height: 85vh;
+  width: 85vh;
+  margin: -1em auto;
+}
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+<div class="slides">
+    <div class="slide-wrapper">
+      <div class="slide" id="slide-1">
+        <div data-id="1" class="slide-overlay"></div>
+        <section class="slide-content"><p><img src="theme/img/partners.png" alt="partners"></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-2">
+        <div data-id="2" class="slide-overlay"></div>
+        <section class="slide-content"><h1 id="service-worker">Service Worker</h1>
+<h2 id="-font-color-red-a-font-font-color-green-gentle-font-introduction"><font color=red>A</font> <font color=green>[gentle]</font> introduction</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-3">
+        <div data-id="3" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="what-is-a-worker-">What is a Worker?</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-4">
+        <div data-id="4" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="browsers-used-to-run-everything-in-one-thread">Browsers used to run everything in one thread</h3>
+<pre><code class="lang-mermaid">sequenceDiagram
+    participant B as 🗔 Browser
+    participant X
+    B-&gt;X: HTTP requests, compute, DOM changes ...</code></pre>
+<p><a href="https://developer.mozilla.org/en-US/docs/Tools/Performance/Scenarios/Intensive_JavaScript">🏋 Intensive Javascript</a></p>
+<script>
+document.currentScript.parentNode.addEventListener('mermaid', event => event.target.querySelectorAll('g:nth-child(4), line').forEach(e => e.style = 'visibility: hidden!important')) // hide lines
+</script></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-5">
+        <div data-id="5" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="workers-runs-javascript-in-another-thread">Workers runs Javascript in another thread</h3>
+<pre><code class="lang-mermaid">sequenceDiagram
+    participant B as 🗔 Browser
+    participant W as 📃 Worker
+    B-&gt;&gt;W: create</code></pre>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Worker">📓 Worker API</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-6">
+        <div data-id="6" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="then-uses-events-to-communicate">Then uses events to communicate</h3>
+<pre><code class="lang-mermaid">sequenceDiagram
+    participant B as 🗔 Browser
+    participant W as 📃 Worker
+    B-&gt;&gt;W: create
+    loop events
+        W--xB: message
+        B--xW: 
+    end</code></pre>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage">📯 postMessage</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-7">
+        <div data-id="7" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="there-are-three-kind-of-workers">There are three kind of Workers</h3>
+<blockquote>
+<p>All run background scripts independently of any UI</p>
+</blockquote>
+<ul>
+<li>Web Workers <small class="fragment">since 2010, perform heavy computation, ex: pdfjs</small></li>
+<li>Shared Workers <small class="fragment">since 2010, shared across same origin <del>webkit in 2015</del></small></li>
+<li>Service Workers <small class="fragment">since 2014, control HTTP requests from same origin</small></li>
+</ul>
+<p><a href="https://www.w3.org/TR/workers/">👷 Workers</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-8">
+        <div data-id="8" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="let-s-talk-about-service-workers">Let&#39;s talk about Service workers</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-9">
+        <div data-id="9" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="definition">Definition</h3>
+<blockquote>
+<p>A service worker acts as a proxy between the browser (your web application) and the network</p>
+</blockquote>
+<p>Main usages</p>
+<ul>
+<li>Offline access<pre><code class="lang-mermaid">graph LR
+  B(&quot;🗔&quot;) --&gt; S(&quot;📃&quot;)
+  S -.- N(&quot;☁&quot;)
+  style B fill:none,stroke:none
+  style S fill:none,stroke:none
+  style N fill:none,stroke:none</code></pre>
+</li>
+<li>Push notifications<pre><code class="lang-mermaid">graph RL
+  N(&quot;🗨&quot;) --&gt; S(&quot;📃&quot;)
+  S -.- B(&quot;🗔&quot;)
+  style B fill:none,stroke:none
+  style S fill:none,stroke:none
+  style N fill:none,stroke:none</code></pre>
+<li class="fragment">and more...</li>
+
+</li>
+</ul>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API">📖 Service Worker API</a></p>
+<script>
+document.currentScript.parentNode.addEventListener('mermaid', event => {
+    event.target.classList.add('fragment', 'float-right')
+    event.target.style.marginTop = '-5rem'
+    event.target.style.maxWidth = '60%'
+    if (event.target.matches('li:nth-of-type(2) svg')) event.target.style.marginTop = '-8rem'
+}) // graphs position
+</script></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-10">
+        <div data-id="10" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="it-uses-recent-async-apis">It uses recent async APIs</h3>
+<p>support: chrome, mozilla, android, opera, edge, safari</p>
+<ul>
+<li>Promises <small class="fragment">construction to execute code after a task is fulfilled</small></li>
+<li>postMessage <small class="fragment">method to communicate between contexts</small></li>
+<li>fetch <small class="fragment">function to make simple HTTP requests, successor of XHR</small></li>
+</ul>
+<p><a href="https://jakearchibald.github.io/isserviceworkerready">✓ Is Service Worker Ready</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-11">
+        <div data-id="11" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="runs-under-conditions">Runs under conditions</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<ul>
+<li>HTTPS only, same origin <small class="fragment">for security reason</small></li>
+<li>No DOM access <small class="fragment">no <code>document</code>, nor <code>window</code></small></li>
+<li>Behind flag <small class="fragment">in Edge &amp; Safari Technical Preview</small></li>
+</ul>
+<p><a href="http://caniuse.com/#search=serviceworker">❔ Can I Use Service Worker</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-12">
+        <div data-id="12" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="how-to-use-it-">How to use it?</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-13">
+        <div data-id="13" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="registration">Registration</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p><code>main.js</code></p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="keyword control js"><span>if</span></span><span>&nbsp;</span><span class="meta brace round js"><span>(</span></span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>serviceWorker</span></span><span class="meta brace round js"><span>)</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>serviceWorker</span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>register</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/service-worker.js</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta brace curly js"><span>{</span></span><span>&nbsp;scope</span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div><div class="line"><span class="source js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>then</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>registration</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span><span class="variable other object js"><span>registration</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>state</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
+<p><span class="fragment">Multiple Service Workers must register distinct scopes</span></p>
+<p><a href="https://developers.google.com/web/fundamentals/getting-started/primers/service-workers">🍰 Getting Started</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-14">
+        <div data-id="14" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="first-install">First install</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p><code>service-worker.js</code></p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="variable other object js"><span>self</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>addEventListener</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>install</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>event</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>event</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>waitUntil</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="comment block js"><span class="punctuation definition comment js"><span>/*</span></span><span>&nbsp;ready&nbsp;to&nbsp;activate&nbsp;</span><span class="punctuation definition comment js"><span>*/</span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
+<pre><code class="lang-mermaid">graph LR
+    P[&quot;🗔 page&quot;] -. register .-&gt; I(&quot;⚙ install&quot;)
+    I --&gt; A(&quot;✔ activate&quot;)
+    I --&gt; E(&quot;⚠ error&quot;)
+    style P fill:white
+    style I fill:white,stroke:#41b6e8
+    style A fill:white,stroke:green
+    style E fill:white,stroke:red</code></pre>
+<p><a href="https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#install">⚙ Service Worker Lifecycle</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-15">
+        <div data-id="15" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="next-visit">Next visit</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<ul>
+<li>Activates only inside scope</li>
+<li>Skip the <code>install</code> event handler</li>
+</ul>
+<pre><code class="lang-mermaid">graph LR
+    P[&quot;🗔 page&quot;] -. in scope .-&gt; A(&quot;✔ activate&quot;)
+    A -. control .-&gt; P
+    click P callback &quot;in the Service Worker Scope&quot;
+    style P fill:white,stroke:lightgrey
+    style A fill:white,stroke:green</code></pre>
+<p><a href="https://developers.google.com/web/fundamentals/primers/service-workers">👍 Service Worker: An Introduction</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-16">
+        <div data-id="16" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="upgrade-process">Upgrade process</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p>New Service Worker will wait deactivation of the old one before it activates</p>
+<pre><code class="lang-mermaid">graph LR
+    subgraph Old Service Worker
+        O(&quot;✔ activate&quot;) --&gt; D(&quot;☠ deactivate&quot;)
+    end
+    subgraph New Service Worker
+        O(&quot;✔ activate&quot;) -. updatefound .-&gt; I(&quot;⚙ install&quot;)
+        I -. waiting .-&gt; A(&quot;✔ activate&quot;)
+    end
+    style O fill:white,stroke:lightgrey
+    style D fill:white,stroke:red
+    style I fill:white,stroke:#41b6e8
+    style A fill:white,stroke:green</code></pre>
+<script>
+document.currentScript.parentNode.addEventListener('mermaid', event => event.target.style.maxWidth = '90%')
+</script>
+
+<p><a href="https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle">✌ Service Worker Lifecycle</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-17">
+        <div data-id="17" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="emitted-events">Emitted events</h3>
+<p>Main functional events</p>
+<ul>
+<li>fetch <small class="fragment">intercepted an HTTP request (made by main thread)</small></li>
+<li>message <small class="fragment">received a message via postMessage</small></li>
+<li>push <small class="fragment">received a push notification</small></li>
+</ul>
+<p><a href="https://developer.mozilla.org/fr/docs/Web/API/ServiceWorker">🗱 Service Worker events</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-18">
+        <div data-id="18" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="states-events-flow">States &amp; events flow</h3>
+<pre><code class="lang-mermaid">graph LR
+    A(&quot;✔ Activated&quot;) --&gt; D{&quot;⌛ Idle&quot;}
+    D --&gt; F(&quot;⚙ Handle event&quot;)
+    F --&gt; D
+    D --&gt; T[&quot;☠ Terminated&quot;]
+    T --&gt; F
+    style A fill:white,stroke:green
+    style D fill:white
+    style F fill:white,stroke:#41b6e8
+    style T fill:white,stroke:red</code></pre>
+<script>
+document.currentScript.parentNode.addEventListener('mermaid', event => event.target.style.maxWidth = '100%')
+</script>
+
+<p><span class="fragment">Service worker may <strong>terminate at any time</strong>!</span></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers">🌠 Using Service Workers</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-19">
+        <div data-id="19" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="avoid-pitfalls">Avoid pitfalls</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-20">
+        <div data-id="20" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="persistence">Persistence</h3>
+<blockquote>
+<p>You cannot rely on global state within a service worker</p>
+</blockquote>
+<ul>
+<li>No Local Storage</li>
+<li>But IndexedDB (use a wrapper!)</li>
+<li>Use the Cache interface</li>
+</ul>
+<p><a href="https://www.npmjs.com/package/localforage">🖥 Localforage</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-21">
+        <div data-id="21" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="tips">Tips</h3>
+<ul>
+<li>Beware of redirects, credentials, streams</li>
+<li>Avoid puting version in script URL</li>
+<li>Specific debug tools <small class="fragment">chrome://serviceworker-internals</small></li>
+<li>By default first run does not <code>control</code> the main Thread</li>
+</ul>
+<p><a href="https://medium.com/@boopathi/service-workers-gotchas-44bec65eab3f">⚠ Service Workers gotchas</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-22">
+        <div data-id="22" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="let-s-go-offline-">Let&#39;s go offline!</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-23">
+        <div data-id="23" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="offline-basics">Offline basics</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p><code>service-worker.js</code></p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="storage modifier js"><span>const</span></span><span>&nbsp;</span><span class="constant other js"><span>CACHE</span></span><span>&nbsp;</span><span class="keyword operator assignment js"><span>=</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>my-awsome-pwa</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span></span></div><div class="line"><span class="source js"><span class="storage modifier js"><span>const</span></span><span>&nbsp;</span><span class="constant other js"><span>FILES</span></span><span>&nbsp;</span><span class="keyword operator assignment js"><span>=</span></span><span>&nbsp;</span><span class="meta brace square js"><span>[</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/styles.css</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>/script.js</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta brace square js"><span>]</span></span></span></div><div class="line"><span class="source js"><span class="variable other object js"><span>self</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>addEventListener</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>install</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>event</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>event</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>waitUntil</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="variable other object js"><span>caches</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="support function dom js"><span>open</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="constant other js"><span>CACHE</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>then</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>cache</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;</span><span class="variable other object js"><span>cache</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>addAll</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="constant other js"><span>FILES</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
+<p><a href="https://w3c.github.io/ServiceWorker/">📚 Service Worker specification</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-24">
+        <div data-id="24" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="cache-first-fallback-to-network">Cache first, fallback to network</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p><code>service-worker.js</code> </p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="variable other object js"><span>self</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>addEventListener</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="string quoted single js"><span class="punctuation definition string begin js"><span>&#39;</span></span><span>fetch</span><span class="punctuation definition string end js"><span>&#39;</span></span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>event</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="support class js"><span>event</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>respondWith</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="variable other object js"><span>caches</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="support function js"><span>match</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="support class js"><span>event</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>request</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>then</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="meta function arrow js"><span class="meta parameters js"><span class="variable parameter function js"><span>response</span></span></span><span>&nbsp;</span><span class="storage type function arrow js"><span>=&gt;</span></span></span><span>&nbsp;response&nbsp;</span><span class="keyword operator logical js"><span>||</span></span><span>&nbsp;</span><span class="meta function-call js"><span class="entity name function js"><span>fetch</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="support class js"><span>event</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>request</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="meta method-call js"><span class="meta arguments js"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta method-call js"><span class="meta arguments js"><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
+<p><a href="https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/#cache-falling-back-to-network">📴 Offline cookbook</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-25">
+        <div data-id="25" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="caching-strategies">Caching strategies</h3>
+<ul>
+<li>Cache only <small class="fragment">KISS Progressive Web Application</small></li>
+<li>Cache first, falling back to network <small class="fragment">static assets</small></li>
+<li>Network first, falling back to cache <small class="fragment">API resources</small></li>
+<li>etc</li>
+</ul>
+<p><a href="https://workboxjs.org/">🗃 Workboxjs</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-26">
+        <div data-id="26" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="receive-notifications">Receive notifications</h2>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-27">
+        <div data-id="27" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="web-push-notification">Web push notification</h3>
+<ul>
+<li>Used to be complex <small class="fragment">vendor specific implementations</small></li>
+<li>Fully standardized <small class="fragment">browser provides push server</small></li>
+<li>Native notifications UI <small class="fragment">with user permission</small></li>
+</ul>
+<p><a href="https://developers.google.com/web/fundamentals/codelabs/push-notifications/">🚨 Push Notifications in Web App</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-28">
+        <div data-id="28" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="subscription">Subscription</h3>
+<p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
+<p><code>main.js</code></p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="storage modifier js"><span>const</span></span><span>&nbsp;</span><span class="constant other js"><span>registration</span></span><span>&nbsp;</span><span class="keyword operator assignment js"><span>=</span></span><span>&nbsp;</span><span class="keyword control js"><span>await</span></span><span>&nbsp;</span><span class="support class js"><span>navigator</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>serviceWorker</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>ready</span></span></span></div><div class="line"><span class="source js"><span class="storage modifier js"><span>const</span></span><span>&nbsp;</span><span class="constant other js"><span>push</span></span><span>&nbsp;</span><span class="keyword operator assignment js"><span>=</span></span><span>&nbsp;</span><span class="keyword control js"><span>await</span></span><span>&nbsp;</span><span class="variable other object js"><span>registration</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other object property js"><span>pushManager</span></span><span class="meta method-call js"><span class="meta delimiter method period js"><span>.</span></span><span class="entity name function js"><span>subscribe</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div><div class="line"><span class="source js"><span class="meta function-call js"><span class="entity name function js"><span>sendToBackend</span></span><span class="meta arguments js"><span class="punctuation definition arguments begin bracket round js"><span>(</span></span><span class="variable other object js"><span>push</span></span><span class="meta delimiter property period js"><span>.</span></span><span class="variable other property js"><span>endpoint</span></span><span class="punctuation definition arguments end bracket round js"><span>)</span></span></span></span></span></div></pre></code></pre>
+<p><code>manifest.json</code> <small>(chrome only)</small></p>
+<pre><code class="lang-javascript"><pre class="editor editor-colors"><div class="line"><span class="source js"><span class="meta brace curly js"><span>{</span></span><span>&nbsp;</span><span class="keyword operator spread js"><span>...</span></span><span class="meta delimiter object comma js"><span>,</span></span><span>&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>gcm_sender_id</span><span class="punctuation definition string end js"><span>&quot;</span></span></span><span class="keyword operator js"><span>:</span></span><span>&nbsp;</span><span class="string quoted double js"><span class="punctuation definition string begin js"><span>&quot;</span></span><span>&lt;Your&nbsp;Sender&nbsp;ID&nbsp;Here&gt;</span><span class="punctuation definition string end js"><span>&quot;</span></span></span><span>&nbsp;</span><span class="meta brace curly js"><span>}</span></span></span></div></pre></code></pre>
+<p><a href="https://developers.google.com/web/fundamentals/codelabs/push-notifications">📲 Web Push Notifications</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-29">
+        <div data-id="29" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="and-more-">And more!</h2>
+<ul>
+<li>Background sync <small class="fragment">wait for stable network connection (backoff)</small></li>
+<li>Periodic background sync <small class="fragment">scheduled synch (in design)</small></li>
+<li>Background fetch <small class="fragment">HTTP request outlives browser close</small></li>
+</ul>
+<p><a href="https://github.com/WICG/background-fetch">🐶 Background-fetching proposal</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-30">
+        <div data-id="30" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="thanks-">Thanks!</h3>
+<h4 id="-oodrive-github-io-serviceworker-md-https-oodrive-github-io-serviceworker-md-2-"><a href="https://oodrive.github.io/ServiceWorker.md/#2">oodrive.github.io/ServiceWorker.md</a></h4>
+<ul>
+<li>Written in <a href="https://github.com/adriengibrat/ServiceWorker.md">Markdown</a> with <a href="https://www.npmjs.com/package/cleaver">Cleaver</a></li>
+<li>Graphs with <a href="https://mermaidjs.github.io/">Mermaid</a>, code with <a href="https://www.npmjs.com/package/highlights">Highlights</a></li>
+<li>Theme <a href="https://github.com/select/cleaver-select-theme">Select</a>, icons <a href="https://www.utf8icons.com/">UTF8</a> with <a href="https://fonts2u.com/symbola.font">Symbola</a> font</li>
+<li><a href="https://twitter.com/jaffathecake">Jake Archibald</a>, author/advocate of <a href="https://w3c.github.io/ServiceWorker/">specs</a></li>
+<li><a href="https://developers.google.com/web/fundamentals/getting-started/primers/service-workers">Google developers website</a> &amp; <a href="https://developer.mozilla.org/en-US/docs/Web/API/Worker">MDN</a></li>
+<li><a href="https://w3c.github.io/ServiceWorker/">w3c</a> &amp; <a href="https://html.spec.whatwg.org/multipage/workers.html">whatwg</a></li>
+</ul>
+<p><a href="https://github.com/oodrive/ServiceWorker.md/blob/master/README.md">👁 Slides sources</a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-31">
+        <div data-id="31" class="slide-overlay"></div>
+        <section class="slide-content"><p><img src="theme/img/feedback.png" alt="feedback"></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  " id="slide-32">
+        <div data-id="32" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="life-cycle-example">Life cycle example</h3>
+<pre><code class="lang-mermaid">sequenceDiagram
+    participant B as 🗔 Browser
+    participant W as 📃 Service Worker
+    participant S as ➡ Push Server
+    B-&gt;&gt;W: register
+    activate B
+    activate W
+    W--xB: message
+    deactivate W
+    B--xW: fetch
+    activate W
+    deactivate W
+    deactivate B
+    S--xW: notification
+    activate W
+    W--xB: 
+    deactivate W</code></pre>
+<script>
+document.currentScript.previousElementSibling.style.maxWidth = '85%'
+// Fix arrow
+document.currentScript.parentNode.addEventListener('mermaid', event => {
+    event.target.querySelectorAll('line[stroke-width][marker-end]').forEach((line, index) => index % 2 || (line.x2.baseVal.value -= 5))
+})
+</script></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden author-slide" id="slide-33">
+        <div data-id="33" class="slide-overlay"></div>
+        <section class="slide-content"><div class="author">
+  <h1 class="name">I&#39;m Adrien, frontend developer</h1>
+    <h3 class="url">
+      <a href="https://oodrive.com">https://oodrive.com</a>
+    </h3>
+    <h3 class="email">
+      <a href="mailto:a.gibrat@oodrive.com">a.gibrat@oodrive.com</a>
+    </h3>
+</div>
+</section>
+      </div>
+    </div>
+</div>
+
+
+
+
+  <script type="text/javascript"src="theme/mermaid.min.js"></script>
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  var $fragments = document.querySelectorAll('#slide-' + position + ' .fragment');
+  var fragmentsFinished = false;
+  if ($fragments.length) {
+    if (n > 0) {
+      var $f = document.querySelectorAll('#slide-' + position + ' .fragment.hidden');
+      if (!$f.length) fragmentsFinished = true;
+      else $f[0].classList.remove('hidden');
+    } else {
+      var $f = document.querySelectorAll('#slide-' + position + ' .fragment:not(.hidden)');
+      if (!$f.length) fragmentsFinished = true;
+      else $f[$f.length - 1].classList.add('hidden');
+    }
+  } else {
+    fragmentsFinished = true;
+  }
+
+  if (fragmentsFinished) {
+    /* Positions are 1-indexed, so we need to add and subtract 1 */
+    var nextPosition = (position - 1 + n) % numSlides + 1;
+
+    /* Normalize nextPosition in-case of a negative modulo result */
+    nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+    document.getElementById('slide-' + position).classList.add('hidden');
+    document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+    position = nextPosition
+    updateProgress();
+    updateURL();
+    updateTabIndex();
+  }
+  document.getElementById('slide-' + position).dispatchEvent(new Event('navigate', { bubbles: true }))
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  try {
+    window.history.replaceState({}, null, '#' + currentPosition());
+  } catch (e) {
+    window.location.hash = currentPosition();
+  }
+}
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+    docElem.requestFullscreen ||
+    docElem.msRequestFullscreen ||
+    docElem.mozRequestFullScreen ||
+    docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+    doc.exitFullscreen ||
+    doc.msExitFullscreen ||
+    doc.mozCancelFullScreen ||
+    doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+const initMermaid = (selector, config) => {
+  mermaid.initialize(config)
+  document.querySelectorAll(selector).forEach(node =>
+    mermaid.render(
+      `mermaid${Date.now()}`
+      , node.textContent
+      , markup => {
+        const svg = new DOMParser().parseFromString(markup, 'image/svg+xml').firstChild
+        svg.removeAttribute('style') // remove max-with
+        svg.querySelectorAll('marker').forEach(marker => { // fix arrow heads
+          const markerId = marker.id
+          const uniqueMarkerId = `${svg.id}-${marker.id}`
+          marker.id = uniqueMarkerId
+          svg.querySelectorAll(`[marker-end="url(#${markerId})"]`)
+            .forEach(line => line.setAttribute('marker-end', `url(#${uniqueMarkerId})`))
+          })
+        node.parentNode.replaceWith(svg) // pre code.lang-mermaid
+        svg.dispatchEvent(new Event('mermaid', { bubbles: true }))
+      }
+    )
+  )
+}
+
+const initSupport = (selector, start = 'support: ') => {
+  const found = document.evaluate(
+    `//${selector}[starts-with(text(), '${start}')]`
+    , document.body
+    , null
+    , XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE
+    , null
+  )
+  const pattern = /(\w+)(:?\s*\((\w+)\))?/
+  Array(found.snapshotLength)
+    .fill()
+    .map((_, index) => found.snapshotItem(index))
+    .forEach(support =>
+      support.replaceWith(
+        new DOMParser().parseFromString(`<div class="support">${ support.textContent
+          .slice(start.length).trim().split(',')
+          .map(browser => {
+            const [, icon, className] = browser.trim().match(/^(\w+)(?:\s*\((\w+)\))?\s*$/)
+            return `<svg class="icon ${className || ''}" role="img"><use xlink:href="#${icon}" /></svg>`
+          })
+          .join(' ') } </div>`
+          , 'text/html'
+        ).body.firstChild
+      )
+    )
+
+}
+
+const initPresenterText = (selector) => {
+  document.addEventListener('navigate', event => {
+    const lastPosition = document.getElementsByClassName('slide').length
+    if (currentPosition() === lastPosition)  return;
+    console.clear()
+    event.target.querySelectorAll('h1,h2,h3,p,li').forEach(node => console.log(`%c${node.innerText.trim()}`, 'font-weight:bold;color:darkgrey'))
+    event.target.querySelectorAll(selector).forEach(node => console.info(`%c${node.textContent.trim()}`, 'font-size:large'))
+    console.log(`%c${currentPosition()}/${document.getElementsByClassName('slide').length} ${new Intl.DateTimeFormat('en', {hour: 'numeric', minute: 'numeric', hour12: false, timeZone: 'Europe/Bucharest'}).format(new Date())}`, 'font-weight:bold')
+  })
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex()
+
+  initMermaid(
+    '.lang-mermaid',
+    {
+      theme: 'neutral',
+      sequenceDiagram: { mirrorActors: false }
+    }
+  )
+
+  initSupport('p')
+
+  initPresenterText('script[type="presenter/text"]')
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1)
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = (e) => {
+    if(e.target.tagName.toLowerCase() === 'textarea') return
+    var kc = e.keyCode
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1)
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1)
+    } else if (kc === 13) {
+      toggleFullScreen()
+    } else if (kc === 27) {
+      toggleOverview()
+    }
+  }
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = (e) => {
+      e.preventDefault()
+      navigate(1)
+    }
+
+    document.querySelector('.prev').onclick = (e) => {
+      e.preventDefault()
+      navigate(-1)
+    }
+  }
+  if (document.querySelector('.overview')) {
+    document.querySelector('.overview').onclick = toggleOverview
+  }
+
+  document.querySelectorAll('.slide-overlay').forEach($overlay => {
+    $overlay.onclick = event => {
+      navigate(parseInt(event.target.dataset.id) - currentPosition())
+      toggleOverview()
+    }
+  })
+
+  document.querySelectorAll('.fragment').forEach($fragment => {
+    $fragment.classList.add('hidden')
+  })
+
+})
+
+function toggleOverview() {
+  if (window.$style !== undefined) {
+    window.$style.remove()
+    delete window.$style
+    document.querySelector('.slides').classList.remove('active')
+  } else {
+    const $slides = document.querySelector('.slides')
+    $slides.classList.add('active')
+    const slidesList = document.querySelectorAll('.slide-wrapper')
+
+    const w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName('body')[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight || e.clientHeight || g.clientHeight
+
+    w.$style = d.createElement('style')
+    w.$style.innerHTML = '.slide-wrapper {width: ' + (x * 0.25) + 'px; height: ' + (y * 0.25) + 'px; } body .slide {width: ' + x + 'px; height: ' + y + 'px; position: relative; transform: scale(0.25,0.25); transform-origin: 0 0; } .slide.hidden{display: block; }'
+    d.getElementsByTagName('head')[0].appendChild(w.$style)
+  }
+}
+
+  </script>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><symbol id="opera" viewBox="0 0 291.492 291.492"><title>opera</title><path style="fill:#E2574C;" d="M224.138,22.932C202.571,8.166,175.879,0,145.782,0c-27.53,0-52.201,6.81-72.73,19.263 C33.534,42.997,9.199,87.423,9.199,144.349c0,76.999,54.613,147.143,136.556,147.143c81.933,0,136.538-70.126,136.538-147.143 C282.284,90.227,260.289,47.403,224.138,22.932z M145.773,27.193c43.953,0,54.586,61.068,54.586,116.537 c0,51.4-6.664,120.178-54.058,120.178s-55.214-69.452-55.214-120.843C91.096,87.596,101.811,27.193,145.773,27.193z"/></symbol><symbol id="android" viewBox="0 0 413.137 413.137"><title>android</title><path style="fill:#AAC148;" d="M311.358,136.395H101.779c-4.662,0-8.441,3.779-8.441,8.441v175.749 c0,4.662,3.779,8.441,8.441,8.441h37.363v59.228c0,13.742,11.14,24.883,24.883,24.883l0,0c13.742,0,24.883-11.14,24.883-24.883 v-59.228h34.803v59.228c0,13.742,11.14,24.883,24.883,24.883l0,0c13.742,0,24.883-11.14,24.883-24.883v-59.228h37.882 c4.662,0,8.441-3.779,8.441-8.441V144.836C319.799,140.174,316.02,136.395,311.358,136.395z"/><path style="fill:#AAC148;" d="M57.856,136.354L57.856,136.354c-13.742,0-24.883,11.14-24.883,24.883v101.065 c0,13.742,11.14,24.883,24.883,24.883l0,0c13.742,0,24.883-11.14,24.883-24.883V161.237 C82.738,147.495,71.598,136.354,57.856,136.354z"/><path style="fill:#AAC148;" d="M355.281,136.354L355.281,136.354c-13.742,0-24.883,11.14-24.883,24.883v101.065 c0,13.742,11.14,24.883,24.883,24.883l0,0c13.742,0,24.883-11.14,24.883-24.883V161.237 C380.164,147.495,369.024,136.354,355.281,136.354z"/><path style="fill:#AAC148;" d="M103.475,124.069h205.692c5.366,0,9.368-4.943,8.266-10.195 c-6.804-32.428-27.45-59.756-55.465-75.543l17.584-31.727c1.19-2.148,0.414-4.855-1.734-6.045 c-2.153-1.193-4.856-0.414-6.046,1.734l-17.717,31.966c-14.511-6.734-30.683-10.495-47.734-10.495 c-17.052,0-33.224,3.761-47.735,10.495L140.869,2.292c-1.191-2.149-3.898-2.924-6.045-1.734c-2.148,1.19-2.924,3.897-1.734,6.045 l17.584,31.727c-28.015,15.788-48.661,43.115-55.465,75.544C94.106,119.126,98.108,124.069,103.475,124.069z M267.697,76.786 c0,5.282-4.282,9.565-9.565,9.565c-5.282,0-9.565-4.282-9.565-9.565c0-5.282,4.282-9.565,9.565-9.565 C263.415,67.221,267.697,71.504,267.697,76.786z M154.508,67.221c5.282,0,9.565,4.282,9.565,9.565c0,5.282-4.282,9.565-9.565,9.565 c-5.282,0-9.565-4.282-9.565-9.565C144.943,71.504,149.225,67.221,154.508,67.221z"/></symbol><symbol id="safari" viewBox="0 0 512 512"><title>safari</title><circle style="fill:#1DA2F8;" cx="256" cy="256" r="256"/><g> <path style="fill:#F2F2F2;" d="M256,37.89c-1.724,0-3.122-1.398-3.122-3.122V20.482c0-1.724,1.398-3.122,3.122-3.122 s3.122,1.398,3.122,3.122v14.286C259.122,36.492,257.724,37.89,256,37.89z"/> <path style="fill:#F2F2F2;" d="M256,494.64c-1.724,0-3.122-1.398-3.122-3.122v-14.286c0-1.724,1.398-3.122,3.122-3.122 s3.122,1.398,3.122,3.122v14.286C259.122,493.242,257.724,494.64,256,494.64z"/> <path style="fill:#F2F2F2;" d="M217.58,41.252c-1.488,0-2.805-1.066-3.072-2.581l-2.481-14.069 c-0.299-1.698,0.835-3.318,2.532-3.616c1.703-0.296,3.319,0.835,3.617,2.533l2.481,14.069c0.299,1.698-0.835,3.318-2.532,3.616 C217.941,41.235,217.76,41.252,217.58,41.252z"/> <path style="fill:#F2F2F2;" d="M296.894,491.063c-1.488,0-2.805-1.066-3.072-2.581l-2.481-14.069 c-0.299-1.698,0.835-3.318,2.532-3.616c1.703-0.3,3.319,0.834,3.617,2.533l2.481,14.068c0.299,1.698-0.835,3.318-2.532,3.616 C297.255,491.047,297.074,491.063,296.894,491.063z"/> <path style="fill:#F2F2F2;" d="M180.334,51.232c-1.275,0-2.472-0.788-2.933-2.055l-4.887-13.424 c-0.588-1.621,0.247-3.412,1.867-4.002c1.615-0.587,3.412,0.245,4,1.866l4.886,13.424c0.59,1.621-0.246,3.412-1.866,4.002 C181.049,51.171,180.689,51.232,180.334,51.232z"/> <path style="fill:#F2F2F2;" d="M336.552,480.437c-1.275,0-2.472-0.788-2.933-2.055l-4.886-13.424 c-0.59-1.621,0.246-3.412,1.866-4.002c1.615-0.589,3.412,0.245,4,1.866l4.887,13.424c0.588,1.621-0.247,3.412-1.867,4.002 C337.267,480.376,336.907,480.437,336.552,480.437z"/> <path style="fill:#F2F2F2;" d="M145.387,67.53c-1.079,0-2.128-0.56-2.707-1.562l-7.143-12.372 c-0.861-1.493-0.351-3.402,1.143-4.264c1.491-0.866,3.402-0.351,4.265,1.142l7.143,12.372c0.861,1.493,0.351,3.402-1.143,4.264 C146.455,67.395,145.917,67.53,145.387,67.53z"/> <path style="fill:#F2F2F2;" d="M373.762,463.087c-1.079,0-2.128-0.56-2.707-1.562l-7.143-12.372 c-0.861-1.493-0.351-3.402,1.143-4.264c1.491-0.866,3.401-0.351,4.265,1.142l7.143,12.372c0.861,1.493,0.351,3.402-1.143,4.264 C374.83,462.952,374.292,463.087,373.762,463.087z"/> <path style="fill:#F2F2F2;" d="M113.796,89.648c-0.89,0-1.776-0.379-2.393-1.115L102.22,77.59c-1.109-1.321-0.936-3.29,0.386-4.399 c1.319-1.107,3.289-0.936,4.398,0.385l9.183,10.943c1.109,1.321,0.936,3.29-0.386,4.399 C115.217,89.409,114.505,89.648,113.796,89.648z"/> <path style="fill:#F2F2F2;" d="M407.389,439.539c-0.89,0-1.776-0.379-2.393-1.115l-9.182-10.943 c-1.109-1.321-0.936-3.29,0.386-4.399c1.319-1.105,3.289-0.936,4.398,0.385l9.181,10.943c1.109,1.321,0.936,3.29-0.386,4.399 C408.81,439.3,408.097,439.539,407.389,439.539z"/> <path style="fill:#F2F2F2;" d="M86.525,116.917c-0.708,0-1.421-0.239-2.004-0.73l-10.943-9.183 c-1.322-1.109-1.494-3.077-0.386-4.399c1.109-1.322,3.079-1.492,4.398-0.385l10.943,9.183c1.322,1.109,1.494,3.077,0.386,4.399 C88.301,116.537,87.415,116.917,86.525,116.917z"/> <path style="fill:#F2F2F2;" d="M436.415,410.51c-0.708,0-1.421-0.239-2.006-0.73l-10.942-9.183 c-1.32-1.109-1.492-3.077-0.385-4.399c1.109-1.322,3.077-1.492,4.399-0.385l10.942,9.183c1.32,1.109,1.492,3.077,0.385,4.399 C438.19,410.131,437.305,410.51,436.415,410.51z"/> <path style="fill:#F2F2F2;" d="M64.404,148.506c-0.529,0-1.066-0.135-1.558-0.419l-12.372-7.143 c-1.494-0.862-2.004-2.771-1.143-4.264c0.863-1.492,2.767-2.007,4.265-1.142l12.372,7.143c1.494,0.862,2.004,2.771,1.143,4.264 C66.533,147.946,65.484,148.506,64.404,148.506z"/> <path style="fill:#F2F2F2;" d="M459.961,376.881c-0.529,0-1.067-0.135-1.558-0.419l-12.371-7.143 c-1.494-0.862-2.004-2.771-1.143-4.264s2.771-2.009,4.265-1.142l12.371,7.143c1.494,0.862,2.004,2.771,1.143,4.264 C462.088,376.321,461.04,376.881,459.961,376.881z"/> <path style="fill:#F2F2F2;" d="M48.11,183.457c-0.355,0-0.715-0.061-1.067-0.189l-13.425-4.886 c-1.621-0.59-2.456-2.381-1.866-4.002c0.588-1.621,2.384-2.453,4-1.866l13.425,4.886c1.621,0.59,2.456,2.381,1.866,4.002 C50.582,182.669,49.385,183.457,48.11,183.457z"/> <path style="fill:#F2F2F2;" d="M477.315,339.674c-0.355,0-0.715-0.061-1.069-0.189l-13.424-4.886 c-1.619-0.59-2.454-2.381-1.864-4.002c0.588-1.621,2.379-2.452,4.002-1.866l13.424,4.886c1.619,0.59,2.454,2.381,1.864,4.002 C479.787,338.888,478.588,339.674,477.315,339.674z"/> <path style="fill:#F2F2F2;" d="M38.131,220.706c-0.18,0-0.362-0.016-0.545-0.048l-14.069-2.481c-1.698-0.3-2.831-1.919-2.532-3.616 c0.299-1.697,1.911-2.83,3.617-2.533l14.069,2.481c1.698,0.3,2.831,1.919,2.532,3.616C40.936,219.64,39.619,220.706,38.131,220.706 z"/> <path style="fill:#F2F2F2;" d="M487.942,300.02c-0.18,0-0.362-0.016-0.545-0.048l-14.068-2.481c-1.698-0.3-2.831-1.919-2.532-3.616 s1.909-2.83,3.617-2.533l14.069,2.481c1.698,0.3,2.831,1.919,2.532,3.616C490.748,298.954,489.43,300.02,487.942,300.02z"/> <path style="fill:#F2F2F2;" d="M34.767,259.122H20.482c-1.724,0-3.122-1.398-3.122-3.122s1.398-3.122,3.122-3.122h14.285 c1.724,0,3.122,1.398,3.122,3.122S36.491,259.122,34.767,259.122z"/> <path style="fill:#F2F2F2;" d="M491.519,259.122h-14.287c-1.724,0-3.122-1.398-3.122-3.122s1.398-3.122,3.122-3.122h14.287 c1.724,0,3.122,1.398,3.122,3.122C494.641,257.724,493.243,259.122,491.519,259.122z"/> <path style="fill:#F2F2F2;" d="M24.057,300.02c-1.488,0-2.805-1.066-3.072-2.581c-0.299-1.697,0.834-3.318,2.532-3.616 l14.069-2.481c1.704-0.297,3.319,0.834,3.617,2.533c0.299,1.697-0.834,3.318-2.532,3.616l-14.069,2.481 C24.418,300.004,24.236,300.02,24.057,300.02z"/> <path style="fill:#F2F2F2;" d="M473.867,220.706c-1.488,0-2.805-1.066-3.072-2.581c-0.299-1.697,0.834-3.318,2.532-3.616 l14.069-2.481c1.701-0.297,3.319,0.834,3.617,2.533c0.299,1.697-0.834,3.318-2.532,3.616l-14.068,2.481 C474.229,220.69,474.047,220.706,473.867,220.706z"/> <path style="fill:#F2F2F2;" d="M34.684,339.674c-1.275,0-2.472-0.788-2.933-2.055c-0.59-1.621,0.246-3.412,1.866-4.002 l13.425-4.886c1.615-0.587,3.412,0.246,4,1.866c0.59,1.621-0.246,3.412-1.866,4.002l-13.425,4.886 C35.4,339.614,35.04,339.674,34.684,339.674z"/> <path style="fill:#F2F2F2;" d="M463.891,183.457c-1.275,0-2.472-0.788-2.933-2.055c-0.59-1.621,0.246-3.412,1.864-4.002 l13.424-4.886c1.624-0.587,3.413,0.246,4.002,1.866c0.59,1.621-0.246,3.412-1.864,4.002l-13.424,4.886 C464.605,183.396,464.246,183.457,463.891,183.457z"/> <path style="fill:#F2F2F2;" d="M52.038,376.881c-1.079,0-2.128-0.56-2.707-1.562c-0.861-1.493-0.351-3.402,1.143-4.264 l12.372-7.143c1.495-0.866,3.401-0.351,4.265,1.142c0.861,1.493,0.351,3.402-1.143,4.264l-12.372,7.143 C53.104,376.746,52.568,376.881,52.038,376.881z"/> <path style="fill:#F2F2F2;" d="M447.597,148.506c-1.079,0-2.128-0.56-2.707-1.562c-0.861-1.493-0.351-3.402,1.143-4.264 l12.371-7.143c1.491-0.865,3.401-0.35,4.265,1.142c0.861,1.493,0.351,3.402-1.143,4.264l-12.371,7.143 C448.664,148.371,448.125,148.506,447.597,148.506z"/> <path style="fill:#F2F2F2;" d="M75.584,410.51c-0.89,0-1.776-0.379-2.393-1.115c-1.109-1.321-0.936-3.29,0.386-4.399l10.943-9.183 c1.319-1.107,3.289-0.936,4.398,0.385s0.936,3.29-0.386,4.399l-10.943,9.183C77.005,410.271,76.293,410.51,75.584,410.51z"/> <path style="fill:#F2F2F2;" d="M425.476,116.917c-0.89,0-1.776-0.379-2.393-1.115c-1.109-1.321-0.936-3.289,0.385-4.399 l10.942-9.183c1.322-1.107,3.291-0.936,4.399,0.385c1.109,1.321,0.936,3.289-0.385,4.399l-10.942,9.183 C426.896,116.677,426.185,116.917,425.476,116.917z"/> <path style="fill:#F2F2F2;" d="M104.61,439.539c-0.708,0-1.421-0.239-2.004-0.73c-1.322-1.109-1.494-3.077-0.386-4.399 l9.183-10.943c1.11-1.321,3.08-1.492,4.398-0.385c1.322,1.109,1.494,3.077,0.386,4.399l-9.183,10.943 C106.386,439.16,105.5,439.539,104.61,439.539z"/> <path style="fill:#F2F2F2;" d="M398.204,89.648c-0.708,0-1.421-0.239-2.004-0.73c-1.322-1.109-1.494-3.077-0.386-4.399 l9.182-10.943c1.109-1.321,3.08-1.492,4.398-0.385c1.322,1.109,1.494,3.078,0.386,4.399l-9.181,10.943 C399.981,89.269,399.095,89.648,398.204,89.648z"/> <path style="fill:#F2F2F2;" d="M138.238,463.087c-0.529,0-1.066-0.135-1.558-0.419c-1.494-0.862-2.004-2.771-1.143-4.264 l7.143-12.372c0.863-1.493,2.767-2.008,4.265-1.142c1.494,0.862,2.004,2.771,1.143,4.264l-7.143,12.372 C140.366,462.527,139.317,463.087,138.238,463.087z"/> <path style="fill:#F2F2F2;" d="M366.613,67.53c-0.529,0-1.066-0.135-1.558-0.419c-1.494-0.862-2.004-2.771-1.143-4.264 l7.143-12.372c0.863-1.493,2.767-2.009,4.265-1.142c1.494,0.862,2.004,2.771,1.143,4.264l-7.143,12.372 C368.741,66.97,367.692,67.53,366.613,67.53z"/> <path style="fill:#F2F2F2;" d="M175.449,480.437c-0.355,0-0.715-0.061-1.067-0.189c-1.621-0.59-2.456-2.381-1.867-4.002 l4.887-13.424c0.59-1.622,2.382-2.456,4-1.866c1.621,0.59,2.456,2.381,1.866,4.002l-4.886,13.424 C177.921,479.65,176.723,480.437,175.449,480.437z"/> <path style="fill:#F2F2F2;" d="M331.666,51.232c-0.355,0-0.715-0.061-1.067-0.189c-1.621-0.59-2.456-2.381-1.866-4.002 l4.886-13.424c0.588-1.622,2.384-2.453,4-1.866c1.621,0.59,2.456,2.381,1.867,4.002l-4.887,13.424 C334.14,50.445,332.941,51.232,331.666,51.232z"/> <path style="fill:#F2F2F2;" d="M215.106,491.063c-0.18,0-0.362-0.016-0.545-0.048c-1.697-0.3-2.831-1.918-2.532-3.616l2.481-14.068 c0.299-1.698,1.911-2.832,3.617-2.533c1.697,0.3,2.831,1.918,2.532,3.616l-2.481,14.069 C217.91,489.996,216.594,491.063,215.106,491.063z"/> <path style="fill:#F2F2F2;" d="M294.42,41.252c-0.18,0-0.362-0.016-0.545-0.048c-1.697-0.3-2.831-1.918-2.532-3.616l2.481-14.069 c0.299-1.697,1.911-2.827,3.617-2.533c1.697,0.3,2.831,1.918,2.532,3.616l-2.481,14.069 C297.224,40.185,295.908,41.252,294.42,41.252z"/> <path style="fill:#F2F2F2;" d="M238.735,61.821c-1.602,0-2.965-1.225-3.106-2.849l-3.265-37.321 c-0.15-1.718,1.12-3.232,2.838-3.382c1.72-0.157,3.232,1.121,3.381,2.838l3.265,37.321c0.15,1.718-1.12,3.232-2.838,3.382 C238.918,61.817,238.825,61.821,238.735,61.821z"/> <path style="fill:#F2F2F2;" d="M276.523,493.744c-1.602,0-2.965-1.225-3.106-2.849l-3.265-37.321 c-0.15-1.718,1.12-3.232,2.838-3.382c1.73-0.157,3.23,1.121,3.381,2.838l3.265,37.321c0.15,1.718-1.12,3.232-2.838,3.382 C276.706,493.739,276.613,493.744,276.523,493.744z"/> <path style="fill:#F2F2F2;" d="M204.738,67.817c-1.379,0-2.64-0.92-3.013-2.314l-9.697-36.187 c-0.446-1.666,0.541-3.377,2.207-3.823c1.665-0.455,3.378,0.542,3.823,2.207l9.697,36.187c0.446,1.666-0.541,3.377-2.207,3.823 C205.278,67.783,205.005,67.817,204.738,67.817z"/> <path style="fill:#F2F2F2;" d="M316.955,486.615c-1.379,0-2.64-0.92-3.013-2.314l-9.696-36.187 c-0.446-1.666,0.541-3.377,2.207-3.823c1.671-0.452,3.376,0.542,3.823,2.207l9.696,36.187c0.446,1.666-0.541,3.377-2.207,3.823 C317.492,486.581,317.222,486.615,316.955,486.615z"/> <path style="fill:#F2F2F2;" d="M172.301,79.624c-1.176,0-2.302-0.668-2.831-1.803l-15.833-33.954 c-0.728-1.562-0.053-3.42,1.509-4.148c1.561-0.728,3.422-0.053,4.149,1.51l15.833,33.954c0.728,1.562,0.053,3.42-1.509,4.148 C173.193,79.53,172.743,79.624,172.301,79.624z"/> <path style="fill:#F2F2F2;" d="M355.536,472.574c-1.176,0-2.302-0.668-2.831-1.803l-15.832-33.954 c-0.728-1.562-0.053-3.42,1.509-4.148s3.422-0.052,4.149,1.51l15.832,33.954c0.728,1.562,0.053,3.42-1.509,4.148 C356.427,472.48,355.978,472.574,355.536,472.574z"/> <path style="fill:#F2F2F2;" d="M142.404,96.885c-0.984,0-1.953-0.464-2.561-1.331l-21.489-30.689 c-0.987-1.413-0.645-3.359,0.767-4.348c1.418-0.991,3.361-0.644,4.349,0.767l21.489,30.689c0.987,1.413,0.645,3.359-0.767,4.348 C143.646,96.702,143.021,96.885,142.404,96.885z"/> <path style="fill:#F2F2F2;" d="M391.091,452.047c-0.984,0-1.953-0.464-2.561-1.331l-21.488-30.689 c-0.987-1.413-0.645-3.359,0.767-4.348c1.418-0.991,3.361-0.644,4.349,0.767l21.487,30.689c0.987,1.413,0.645,3.359-0.767,4.348 C392.333,451.864,391.707,452.047,391.091,452.047z"/> <path style="fill:#F2F2F2;" d="M115.954,119.077c-0.798,0-1.598-0.305-2.207-0.914L87.256,91.671c-1.219-1.218-1.219-3.196,0-4.415 s3.195-1.219,4.415,0l26.491,26.491c1.219,1.218,1.219,3.196,0,4.415C117.552,118.771,116.754,119.077,115.954,119.077z"/> <path style="fill:#F2F2F2;" d="M422.537,425.658c-0.798,0-1.598-0.305-2.207-0.914l-26.491-26.491 c-1.219-1.218-1.219-3.196,0-4.415s3.195-1.219,4.415,0l26.491,26.491c1.219,1.218,1.219,3.196,0,4.415 C424.135,425.353,423.336,425.658,422.537,425.658z"/> <path style="fill:#F2F2F2;" d="M93.76,145.523c-0.618,0-1.242-0.183-1.788-0.565L61.284,123.47 c-1.412-0.988-1.754-2.935-0.767-4.348c0.991-1.413,2.934-1.756,4.349-0.767l30.688,21.487c1.412,0.988,1.754,2.935,0.767,4.348 C95.713,145.058,94.744,145.523,93.76,145.523z"/> <path style="fill:#F2F2F2;" d="M448.923,394.21c-0.618,0-1.242-0.183-1.788-0.565l-30.689-21.487 c-1.412-0.988-1.754-2.935-0.767-4.348c0.991-1.411,2.933-1.756,4.349-0.767l30.689,21.488c1.412,0.988,1.754,2.935,0.767,4.348 C450.876,393.745,449.907,394.21,448.923,394.21z"/> <path style="fill:#F2F2F2;" d="M76.5,175.421c-0.442,0-0.89-0.094-1.317-0.294L41.23,159.295c-1.564-0.728-2.239-2.586-1.511-4.148 c0.728-1.562,2.587-2.237,4.148-1.51l33.954,15.832c1.564,0.728,2.239,2.586,1.511,4.148 C78.802,174.753,77.676,175.421,76.5,175.421z"/> <path style="fill:#F2F2F2;" d="M469.45,358.657c-0.442,0-0.891-0.094-1.319-0.294l-33.953-15.832 c-1.562-0.728-2.238-2.586-1.509-4.148s2.588-2.238,4.149-1.51l33.953,15.832c1.562,0.728,2.238,2.586,1.509,4.148 C471.752,357.989,470.625,358.657,469.45,358.657z"/> <path style="fill:#F2F2F2;" d="M64.696,207.863c-0.266,0-0.538-0.034-0.81-0.108l-36.188-9.696 c-1.667-0.446-2.654-2.158-2.207-3.823c0.445-1.665,2.154-2.658,3.823-2.207l36.188,9.696c1.667,0.446,2.654,2.158,2.207,3.823 C67.335,206.942,66.073,207.863,64.696,207.863z"/> <path style="fill:#F2F2F2;" d="M483.494,320.079c-0.266,0-0.538-0.034-0.81-0.108l-36.188-9.697 c-1.667-0.446-2.654-2.158-2.207-3.823c0.445-1.665,2.154-2.656,3.823-2.207l36.188,9.697c1.667,0.446,2.654,2.158,2.207,3.823 C486.135,319.16,484.872,320.079,483.494,320.079z"/> <path style="fill:#F2F2F2;" d="M58.701,241.86c-0.092,0-0.183-0.004-0.276-0.013l-37.321-3.265 c-1.717-0.15-2.987-1.663-2.837-3.382c0.149-1.718,1.668-2.993,3.382-2.838l37.321,3.265c1.717,0.15,2.987,1.663,2.837,3.382 C61.667,240.635,60.304,241.86,58.701,241.86z"/> <path style="fill:#F2F2F2;" d="M490.626,279.649c-0.09,0-0.183-0.004-0.275-0.013l-37.322-3.265 c-1.718-0.15-2.989-1.663-2.838-3.382c0.15-1.717,1.651-2.989,3.381-2.838l37.322,3.265c1.718,0.15,2.989,1.663,2.838,3.382 C493.59,278.425,492.227,279.649,490.626,279.649z"/> <path style="fill:#F2F2F2;" d="M21.375,279.649c-1.602,0-2.965-1.225-3.106-2.849c-0.15-1.718,1.12-3.232,2.837-3.382l37.321-3.265 c1.745-0.15,3.233,1.122,3.382,2.838c0.15,1.718-1.12,3.232-2.837,3.382l-37.321,3.265 C21.558,279.645,21.465,279.649,21.375,279.649z"/> <path style="fill:#F2F2F2;" d="M453.298,241.86c-1.602,0-2.965-1.225-3.106-2.849c-0.15-1.718,1.12-3.232,2.838-3.382l37.322-3.265 c1.728-0.162,3.23,1.122,3.381,2.838c0.15,1.718-1.12,3.232-2.838,3.382l-37.322,3.265 C453.48,241.856,453.387,241.86,453.298,241.86z"/> <path style="fill:#F2F2F2;" d="M28.505,320.079c-1.379,0-2.64-0.919-3.013-2.314c-0.446-1.666,0.541-3.377,2.207-3.823 l36.188-9.697c1.661-0.453,3.376,0.542,3.823,2.207c0.446,1.666-0.541,3.377-2.207,3.823l-36.188,9.697 C29.045,320.045,28.771,320.079,28.505,320.079z"/> <path style="fill:#F2F2F2;" d="M447.304,207.863c-1.379,0-2.64-0.92-3.013-2.314c-0.446-1.666,0.541-3.377,2.207-3.823 l36.188-9.696c1.664-0.451,3.376,0.542,3.823,2.207c0.446,1.666-0.541,3.377-2.207,3.823l-36.188,9.696 C447.843,207.828,447.571,207.863,447.304,207.863z"/> <path style="fill:#F2F2F2;" d="M42.549,358.657c-1.176,0-2.302-0.668-2.831-1.804c-0.728-1.562-0.053-3.42,1.511-4.148 l33.954-15.832c1.555-0.728,3.419-0.052,4.148,1.51c0.729,1.562,0.053,3.42-1.511,4.148l-33.954,15.832 C43.441,358.562,42.991,358.657,42.549,358.657z"/> <path style="fill:#F2F2F2;" d="M435.5,175.421c-1.176,0-2.302-0.668-2.831-1.803c-0.728-1.562-0.053-3.42,1.509-4.148 l33.953-15.832c1.562-0.727,3.421-0.052,4.149,1.51s0.053,3.42-1.509,4.148l-33.953,15.832 C436.392,175.327,435.943,175.421,435.5,175.421z"/> <path style="fill:#F2F2F2;" d="M63.078,394.21c-0.984,0-1.953-0.464-2.561-1.331c-0.987-1.413-0.645-3.359,0.767-4.348 l30.688-21.488c1.418-0.991,3.361-0.644,4.349,0.767c0.987,1.413,0.645,3.359-0.767,4.348l-30.688,21.487 C64.321,394.026,63.696,394.21,63.078,394.21z"/> <path style="fill:#F2F2F2;" d="M418.239,145.523c-0.984,0-1.953-0.464-2.561-1.331c-0.987-1.413-0.645-3.359,0.767-4.348 l30.689-21.487c1.418-0.991,3.359-0.644,4.349,0.767c0.987,1.413,0.645,3.359-0.767,4.348l-30.689,21.487 C419.482,145.339,418.857,145.523,418.239,145.523z"/> <path style="fill:#F2F2F2;" d="M89.464,425.658c-0.798,0-1.598-0.305-2.207-0.914c-1.219-1.218-1.219-3.196,0-4.415l26.491-26.491 c1.219-1.219,3.195-1.219,4.415,0c1.219,1.218,1.219,3.196,0,4.415l-26.491,26.491C91.062,425.353,90.262,425.658,89.464,425.658z"/> <path style="fill:#F2F2F2;" d="M396.047,119.077c-0.798,0-1.598-0.305-2.207-0.914c-1.219-1.218-1.219-3.196,0-4.415l26.491-26.491 c1.219-1.219,3.195-1.219,4.415,0c1.219,1.218,1.219,3.196,0,4.415l-26.491,26.491 C397.643,118.771,396.845,119.077,396.047,119.077z"/> <path style="fill:#F2F2F2;" d="M120.909,452.047c-0.618,0-1.242-0.183-1.788-0.565c-1.412-0.988-1.754-2.935-0.767-4.348 l21.489-30.689c0.991-1.411,2.934-1.756,4.349-0.767c1.412,0.988,1.754,2.935,0.767,4.348l-21.489,30.689 C122.861,451.583,121.894,452.047,120.909,452.047z"/> <path style="fill:#F2F2F2;" d="M369.596,96.885c-0.618,0-1.242-0.183-1.788-0.565c-1.412-0.988-1.754-2.935-0.767-4.348 l21.488-30.689c0.99-1.413,2.936-1.756,4.349-0.767c1.412,0.988,1.754,2.935,0.767,4.348l-21.487,30.689 C371.549,96.421,370.581,96.885,369.596,96.885z"/> <path style="fill:#F2F2F2;" d="M156.464,472.574c-0.442,0-0.891-0.094-1.319-0.294c-1.562-0.728-2.238-2.586-1.509-4.148 l15.833-33.954c0.727-1.562,2.588-2.238,4.149-1.51c1.562,0.728,2.238,2.586,1.509,4.148l-15.833,33.954 C158.766,471.906,157.64,472.574,156.464,472.574z"/> <path style="fill:#F2F2F2;" d="M339.701,79.624c-0.442,0-0.891-0.094-1.319-0.294c-1.562-0.728-2.238-2.586-1.509-4.148 l15.832-33.954c0.727-1.563,2.588-2.238,4.149-1.51c1.562,0.728,2.238,2.586,1.509,4.148L342.531,77.82 C342.001,78.957,340.875,79.624,339.701,79.624z"/> <path style="fill:#F2F2F2;" d="M195.045,486.615c-0.266,0-0.539-0.034-0.81-0.108c-1.667-0.446-2.654-2.158-2.207-3.823 l9.697-36.187c0.446-1.663,2.16-2.658,3.823-2.207c1.667,0.446,2.654,2.158,2.207,3.823l-9.697,36.187 C197.685,485.696,196.423,486.615,195.045,486.615z"/> <path style="fill:#F2F2F2;" d="M307.263,67.817c-0.266,0-0.538-0.034-0.81-0.108c-1.667-0.446-2.654-2.158-2.207-3.823 l9.696-36.187c0.446-1.665,2.151-2.661,3.823-2.207c1.667,0.446,2.654,2.158,2.207,3.823l-9.696,36.187 C309.903,66.896,308.641,67.817,307.263,67.817z"/> <path style="fill:#F2F2F2;" d="M235.476,493.744c-0.09,0-0.183-0.004-0.275-0.013c-1.718-0.15-2.989-1.664-2.838-3.382 l3.265-37.321c0.149-1.717,1.663-2.995,3.381-2.838c1.718,0.15,2.989,1.663,2.838,3.382l-3.265,37.321 C238.44,492.519,237.078,493.744,235.476,493.744z"/> <path style="fill:#F2F2F2;" d="M273.264,61.821c-0.09,0-0.183-0.004-0.275-0.013c-1.718-0.15-2.989-1.663-2.838-3.382l3.265-37.321 c0.149-1.717,1.647-2.996,3.381-2.838c1.718,0.15,2.989,1.663,2.838,3.382L276.37,58.97 C276.229,60.597,274.867,61.821,273.264,61.821z"/> <polygon style="fill:#F2F2F2;" points="286.928,286.928 424.877,87.123 225.072,225.072 87.123,424.877 "/> </g><polygon style="fill:#CCCCCC;" points="286.928,286.928 424.877,87.123 87.123,424.877 "/><polygon style="fill:#FF525D;" points="286.928,286.928 424.877,87.123 225.072,225.072 "/><polygon style="fill:#EF4152;" points="286.928,286.928 424.877,87.123 256,256 "/></symbol><symbol id="internet-explorer" viewBox="0 0 503.417 503.417"><title>internet-explorer</title><path style="fill:#00C8F6;" d="M179.649,292.487c0,17.067,7.186,31.439,15.27,46.709c8.982,16.168,21.558,28.744,37.726,38.625 s33.235,14.372,52.996,14.372c18.863,0,36.828-4.491,52.996-14.372c16.168-9.881,27.846-24.253,37.726-40.421h125.754 c-16.168,45.811-44.014,85.333-84.435,114.077s-85.333,44.014-134.737,44.014c-36.828,0-72.758-8.084-105.095-24.253 c-73.656,35.93-126.653,37.726-158.989,5.389C5.389,465.848,0,447.883,0,423.631s4.491-52.098,14.372-81.74 c9.881-30.54,25.151-62.877,47.607-99.705c17.067-28.744,29.642-51.2,78.147-97.909c17.965-17.965,26.049-26.947,30.54-31.439 c-43.116,20.66-98.807,59.284-143.719,98.807c26.947-66.47,64.674-100.604,110.484-129.347 c49.404-29.642,89.825-49.404,143.719-49.404c5.389,0,10.779,0,17.067,0.898C337.74,15.827,373.67,6.845,406.007,4.15 c32.337-1.796,54.793,3.593,68.267,16.168c26.947,26.947,28.744,70.063,7.186,128.449c20.66,35.93,21.558,76.351,21.558,117.67 c0,9.881,0.898,18.863,0,26.947H386.246H179.649V292.487z"/><g> <path style="fill:#FFFFFF;" d="M143.719,445.189c-46.709-28.744-62.877-52.098-81.74-103.298 c-31.439,61.081-40.421,88.926-17.067,112.281C65.572,474.831,89.825,469.441,143.719,445.189"/> <path style="fill:#FFFFFF;" d="M377.263,229.61c-1.796-25.151-10.779-47.607-29.642-64.674 c-18.863-17.965-41.319-25.151-66.47-25.151c-26.049,0-47.607,7.186-66.47,25.151s-32.337,39.523-34.133,64.674H377.263z"/> <path style="fill:#FFFFFF;" d="M366.484,49.062c43.116,21.558,50.302,25.151,82.639,63.775 c10.779-29.642,12.575-37.726,8.084-46.709c-4.491-10.779-13.474-18.863-23.354-24.253 C417.684,32.894,406.905,32.894,366.484,49.062"/> </g></symbol><symbol id="mozilla" viewBox="0 0 511.719 511.719"><title>mozilla</title><path style="fill:#2179A6;" d="M255.044,503.909c135.492,0,245.332-112.728,245.332-251.768 c0-139.028-109.844-251.76-245.332-251.76c-135.508,0-245.352,112.732-245.352,251.76 C9.688,391.181,119.548,503.909,255.044,503.909z"/><path style="fill:#195D80;" d="M498.216,285.105c-1.28,0.976-2.58,1.944-3.984,2.836c2.172-5.876,4.14-13.444,5.772-22.156 c0.236-4.52,0.376-9.068,0.376-13.652c0-52.572-15.732-101.364-42.584-141.744c-24.308-28.752-57.408-53.424-101.264-65.828 c47.196,31.912,64.828,59.024,75.984,83.148c-12.624-13.236-34.228-27.044-48.812-28.192c21.876,16.684,58.484,66.18,54.588,141.168 c-5.612-12.08-15.88-30.988-23.172-37.604c7.852,73.648,0.976,89.46-3.792,109.024c-1.048-8.992-4.204-15.744-6.024-19.848 c0,0-0.84,23.016-15.42,55.808c-11.048,24.836-22.448,32.508-27.492,31.64c-1.376-0.092-2.108-0.696-2.096-0.752 c0.36-3.216,0.684-6.584-0.148-8.732c0,0-4.66,1.648-7.668,5.984c-1.212,1.748-2.78,3.452-4.84,5.056 c-0.352,0.28,3.328-4.836,3.052-4.6c-1.812,1.516-3.752,3.28-5.708,5.36c-7.152,7.612-13.596,16.056-16.956,13.664 c3.128-0.976,5.624-5.06,6.3-9.06c-2.808,2.012-9.94,7.48-25.94,9.916c-6.544,1-34.38,6.188-71.4-12.796 c5.4-0.632,13.476-2.584,19.632,1.148c-6.156-6.892-21.032-5.46-31.696-8.916c-9.292-3.016-21.42-16.388-28.388-23.14 c28.492,7.156,58.748,1.992,76.24-10.272c17.676-12.4,28.148-21.452,37.544-19.308c9.38,2.144,15.632-7.508,8.324-16.088 c-7.28-8.584-24.944-20.124-48.98-13.944c-18.4,4.728-34.084,19.876-59.928,9.344c-1.564-0.632-3.176-1.368-4.832-2.204 c-1.652-0.844,5.404,1,3.664-0.048c-4.968-1.88-14-6.124-16.24-7.736c-0.364-0.28,3.74,0.764,3.312,0.492 c-24.532-14.884-22.924-26.788-22.924-34.16c0-5.896,3.492-13.868,10.044-17.604c3.536,1.292,5.732,2.476,5.732,2.476 s-1.632-2.576-2.668-3.824c0.24-0.088,0.488-0.156,0.736-0.228c2.888,1.004,13.16,5.316,18.644,9.804 c6.516-12.488,1.644-33.168,0.976-34.448c0-0.024,0.016-0.028,0.016-0.06c1.38-6.348,38.272-26.176,41.032-28.268 c3.82-2.9,7.712-7.372,10.148-12.52c1.768-3.288,3.04-7.968,2.696-14.712c-0.252-4.868-3.072-7.844-42.416-7.504 c-10.752,0.084-17.752-6.332-21.984-12.448c-0.852-1.332-1.616-2.596-2.296-3.74c-0.928-1.7-1.556-3.212-2.032-4.432 c4.7-17.492,20.368-42.356,34.52-49.936c-26.144-8.424-58.144,15.576-67.24,28.46c-0.028,0.044-0.064,0.08-0.088,0.116 c-22.996-5.86-42.512-4.44-58.832,0.924c-12.116-6.016-19.804-18.668-24.16-30.376c-11.108,12.236-21.064,25.584-29.64,39.904 c-0.992,8.112-1.52,17.692-0.752,28.752c-0.012,1.428,0.208,2.812,0.164,4.092c-6.188,8.74-10.224,16.26-11.796,19.968 c-7.548,15.096-15.28,38.308-21.52,74.36c0,0,4.192-13.588,12.572-28.976c-6,18.824-10.708,47.84-8.38,90.908 c0.14,0.612,0.272,1.24,0.416,1.848c0.488-4.148,1.84-13.936,4.492-26.32c1.6,30.064,8.56,67.024,31.396,107.1 c2.128,3.744,4.692,8.092,7.748,12.892c44.844,60.032,115.404,98.78,194.804,98.78C379.636,503.909,482.468,408.557,498.216,285.105 z"/><path style="fill:#E78244;" d="M440.992,401.377c14.088-27.196,33.208-43.12,43.56-61.928c13.736-25.02,39.688-95.364,20.12-152.1 c8.968,35.524,6.168,71.616-22.44,89.744c9.252-25.028,15.052-79.94,5.516-129.412c-6.204-32.148-25.82-60.952-38.608-69.932 c11.772,9.056,21.244,41.488,20.98,56.372c-24.632-42.544-64.828-83.22-125.588-100.404c47.196,31.912,64.828,59.024,75.984,83.148 c-12.616-13.236-34.224-27.044-48.812-28.192c21.876,16.684,58.492,66.18,54.592,141.168c-5.608-12.08-15.884-30.988-23.172-37.604 c7.852,73.652,0.976,89.464-3.792,109.024c-1.048-8.992-4.204-15.744-6.024-19.848c0,0-0.84,23.016-15.424,55.808 c-11.044,24.836-22.444,32.508-27.492,31.64c-1.368-0.092-2.104-0.696-2.092-0.752c0.36-3.216,0.684-6.584-0.148-8.732 c0,0-4.66,1.648-7.668,5.984c-1.212,1.748-2.776,3.452-4.84,5.056c-0.352,0.28,3.328-4.836,3.056-4.6 c-1.82,1.516-3.752,3.28-5.712,5.36c-7.152,7.612-13.6,16.056-16.952,13.664c3.124-0.976,5.62-5.06,6.296-9.06 c-2.812,2.012-9.944,7.48-25.936,9.916c-6.548,1-34.384,6.188-71.404-12.796c5.4-0.632,13.476-2.584,19.632,1.148 c-6.156-6.892-21.032-5.46-31.696-8.916c-9.292-3.016-21.42-16.388-28.388-23.14c28.492,7.156,58.748,1.992,76.24-10.272 c17.676-12.4,28.152-21.452,37.544-19.308c9.376,2.144,15.632-7.512,8.324-16.088c-7.276-8.584-24.94-20.124-48.98-13.944 c-18.4,4.728-34.084,19.876-59.928,9.344c-1.564-0.632-3.176-1.368-4.832-2.204c-1.652-0.844,5.404,1,3.664-0.052 c-4.968-1.876-14-6.12-16.24-7.732c-0.364-0.28,3.74,0.764,3.312,0.492c-24.532-14.884-22.924-26.788-22.924-34.164 c0-5.896,3.492-13.868,10.044-17.604c3.536,1.292,5.732,2.476,5.732,2.476s-1.632-2.576-2.668-3.824 c0.24-0.088,0.488-0.156,0.736-0.228c2.888,1.004,13.16,5.316,18.644,9.804c6.516-12.488,1.644-33.168,0.976-34.448 c0-0.024,0.016-0.028,0.016-0.06c1.38-6.348,38.272-26.176,41.032-28.268c3.82-2.9,7.712-7.372,10.148-12.52 c1.768-3.288,3.04-7.968,2.696-14.712c-0.252-4.868-3.068-7.844-42.412-7.504c-10.752,0.084-17.752-6.332-21.984-12.448 c-0.852-1.332-1.616-2.596-2.296-3.74c-0.928-1.7-1.556-3.212-2.032-4.432c4.7-17.492,20.368-42.356,34.52-49.936 c-26.148-8.428-58.148,15.572-67.244,28.452c-0.028,0.044-0.064,0.084-0.088,0.116c-22.996-5.86-42.512-4.44-58.832,0.924 c-19.984-9.92-27.984-37.92-28.724-49.9c-11.26,7.98-21.632,40.168-23,46.588c-2,10.148-4.052,24.004-2.832,41.596 c-0.012,1.428,0.208,2.812,0.164,4.092c-6.188,8.74-10.224,16.26-11.796,19.968C13.972,177.553,6.24,200.765,0,236.817 c0,0,4.192-13.588,12.572-28.976c-6.18,19.384-11.008,49.532-8.172,94.752c0.112-1.492,1.404-12.916,4.7-28.312 c1.6,30.064,8.56,67.024,31.396,107.1c17.4,30.568,63.26,101.576,178.328,128.148c-12.632-3.736-20.484-11.22-20.484-11.22 s42.976,14.164,74.344,12.956c-9.82-1.74-11.78-6.612-11.78-6.612s111.516,6.468,150.076-47.476 c-13.18,15.812-46.56,20.276-59.188,20.416c19.22-18.112,61.708-17.688,107.732-64.14c25.248-25.488,27.972-44.876,30.728-63 C486.028,374.189,463.996,388.425,440.992,401.377z"/><path style="fill:#144F66;" d="M248.94,160.637c1.78-4.464,3.804-14.952-2.028-17.152c-4.864-1.196-8.988-2.06-16.916-1.88 c2.612,0.668,10.112,2.184,12.06,5.772c3.716,6.864-5.064,23.312-6.34,26.812C239.716,174.193,247.188,165.029,248.94,160.637z"/></symbol><symbol id="chrome" viewBox="0 0 291.364 291.364"><title>chrome</title><path style="fill:#26A6D1;" d="M145.683,90.937c30.17,0,54.622,24.471,54.622,54.622c0,30.179-24.453,54.622-54.622,54.622 c-30.152,0-54.622-24.453-54.622-54.622C91.061,115.408,115.532,90.937,145.683,90.937z"/><path style="fill:#3DB39E;" d="M145.683,218.398c-36.852,0-67.231-27.384-72.074-62.925L23.402,68.414l-0.055-0.127l-5.617,8.111 c-1.384,2.54-2.731,5.116-3.969,7.747l-2.686,6.282c-0.892,2.167-1.775,4.361-2.567,6.6c-0.892,2.485-1.666,4.998-2.403,7.52 l-1.62,5.799c-0.674,2.704-1.247,5.408-1.766,8.13l-0.983,5.744c-0.401,2.667-0.71,5.317-0.947,7.966l-0.473,6.345 c-0.118,2.422-0.164,4.834-0.164,7.256s0.036,4.843,0.164,7.256l0.473,6.345c0.246,2.649,0.564,5.317,0.947,7.966l0.983,5.744 c0.528,2.722,1.092,5.426,1.766,8.13l1.62,5.799c0.747,2.504,1.511,5.034,2.403,7.52c0.792,2.221,1.684,4.406,2.567,6.6 c0.874,2.094,1.711,4.197,2.686,6.272c1.238,2.631,2.585,5.189,3.978,7.756l1.812,3.56l0.838,1.302 c1.602,2.74,3.368,5.353,5.153,7.966l2.859,4.251c1.721,2.349,3.605,4.588,5.49,6.846l3.769,4.515 c1.639,1.793,3.396,3.505,5.125,5.226c1.73,1.739,3.432,3.523,5.235,5.134l4.515,3.787c2.258,1.866,4.497,3.751,6.846,5.48 l4.215,2.877c2.622,1.793,5.253,3.56,7.966,5.153l1.293,0.838l3.55,1.812c2.549,1.384,5.116,2.758,7.747,3.987l0.756,0.391 l3.687,1.511c9.85,4.197,20.137,7.165,30.625,9.122l41.558-72.065C155.907,217.843,150.863,218.398,145.683,218.398z"/><path style="fill:#EFC75E;" d="M290.851,135.636l-0.191-2.403c-1.029-12.163-6.027-29.769-10.178-41.586h-85.966 c14.702,13.319,23.997,32.5,23.997,53.912c0,23.105-10.788,43.652-27.539,56.989l-51.208,88.816c18.007,0,42.25-3.25,59.693-10.223 l0.592-0.191l0.929-0.391c5.945-2.467,11.826-5.171,17.552-8.485c5.125-2.95,9.923-6.263,14.557-9.723l0.264-0.209 c4.461-3.378,8.639-6.973,12.627-10.761l0.619-0.537l2.012-2.048c8.812-8.822,16.378-18.562,22.55-29.068l0.701-1.029l1.265-2.558 c1.985-3.605,3.824-7.292,5.499-11.043l2.148-5.053c1.42-3.56,2.658-7.165,3.796-10.815l1.502-4.698 c1.393-5.071,2.531-10.187,3.378-15.367l0.355-2.95c0.628-4.443,1.074-8.913,1.302-13.428l0.082-3.614 C291.261,144.676,291.17,140.152,290.851,135.636z"/><path style="fill:#E2574C;" d="M271.779,72.73c-3.05-5.28-6.464-10.205-10.051-14.957l-1.174-1.457 c-3.223-4.16-6.637-8.111-10.242-11.826l-2.44-2.504c-3.96-3.896-8.066-7.593-12.372-10.97l-0.947-0.801 c-4.798-3.696-9.823-7.019-15.003-10.06l-1.038-0.692l-3.942-2.048c-2.276-1.229-4.543-2.458-6.882-3.56 c-2.249-1.047-4.515-1.976-6.782-2.913l-5.708-2.276c-2.758-0.992-5.544-1.83-8.339-2.686l-4.643-1.347 c-3.041-0.783-6.109-1.402-9.167-1.994l-4.333-0.856c-2.986-0.482-5.972-0.783-8.967-1.065l-4.907-0.501 c-2.567-0.164-5.125-0.146-7.711-0.182L140.813,0l-4.916,0.355c-10.87,0.728-21.74,2.667-32.418,5.899l-2.212,0.601 c-2.704,0.874-5.371,1.939-8.048,2.986l-5.134,2.03c-2.203,0.938-4.379,2.039-6.564,3.123c-2.112,1.038-4.233,2.085-6.309,3.241 l-2.367,1.211l-3.496,2.258c-2.067,1.275-4.115,2.576-6.127,3.96c-1.966,1.375-3.905,2.777-5.799,4.215l-5.007,3.997 c-2.067,1.73-4.078,3.487-6.036,5.307l-3.714,3.623c-2.158,2.167-4.27,4.37-6.263,6.646l-1.356,1.639l41.431,71.874 c9.513-29.141,36.888-50.234,69.216-50.234C145.692,72.73,271.779,72.73,271.779,72.73z"/></symbol><symbol id="edge" viewBox="0 0 272.603 272.603"><title>edge</title><path style="fill:#26A6D1;" d="M107.623,67.226c-10.924,11.835-16.387,26.401-18.207,41.877c32.773,0,64.636,0,96.499,0 c0-2.731,0-4.552,0-7.283c-0.91-10.014-2.731-20.028-8.193-29.132c-7.283-11.835-19.118-18.207-32.773-20.028 c-20.028-3.641-39.146,0-57.353,7.283c-27.311,10.014-50.07,26.401-68.278,48.25c-2.731,3.641-5.462,8.193-9.104,12.745 c0-2.731,0-3.641,0.91-5.462c3.641-25.49,12.745-50.07,30.042-70.099C61.195,21.708,86.685,7.142,117.638,1.68 c30.042-4.552,58.264,0,84.665,15.476c24.58,13.656,40.967,34.594,50.981,60.995c5.462,14.566,8.193,30.953,9.104,46.429 c0,10.014,0,20.028,0,30.042c0,0.91,0,1.821,0,3.641c-57.353,0-113.796,0-171.15,0c0,13.656,4.552,26.401,13.656,36.415 c10.924,11.835,25.49,17.297,40.056,20.028c32.773,4.552,62.816-0.91,91.037-17.297c0.91,0,1.821-0.91,1.821-0.91s0,0,0.91,0 c0,0.91,0,1.821,0,2.731c0,17.297,0,34.594,0,51.891c0,1.821-0.91,2.731-2.731,3.641c-20.028,10.014-41.877,16.387-64.636,17.297 c-14.566,0.91-29.132,0.91-42.787-1.821c-42.787-9.104-77.382-40.056-85.575-84.665c-9.104-50.981,15.476-97.41,63.726-118.348 C106.713,67.226,106.713,67.226,107.623,67.226z"/></symbol></svg>
+</body>
+</html>
