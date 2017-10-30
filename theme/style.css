@@ -575,15 +575,6 @@ marker[id$=-crosshead] path {
   background-image: url(theme/img/logo.png);
 }
 
-#slide-1 {
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-origin: border-box;
-  background-image: url(theme/img/partners.png);
-}
-#slide-1 img { display: none; }
-
 #slide-2 h1 {
   margin-top: 1em;
   text-shadow: 1px 1px 1px #000;

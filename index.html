@@ -582,15 +582,6 @@ marker[id$=-crosshead] path {
   background-image: url(theme/img/logo.png);
 }
 
-#slide-1 {
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-origin: border-box;
-  background-image: url(theme/img/partners.png);
-}
-#slide-1 img { display: none; }
-
 #slide-2 h1 {
   margin-top: 1em;
   text-shadow: 1px 1px 1px #000;
@@ -640,28 +631,21 @@ img[alt="feedback"] {
     <div class="slide-wrapper">
       <div class="slide" id="slide-1">
         <div data-id="1" class="slide-overlay"></div>
-        <section class="slide-content"><p><img src="theme/img/partners.png" alt="partners"></p>
-</section>
-      </div>
-    </div>
-    <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-2">
-        <div data-id="2" class="slide-overlay"></div>
         <section class="slide-content"><h1 id="service-worker">Service Worker</h1>
 <h2 id="-font-color-red-a-font-font-color-green-gentle-font-introduction"><font color=red>A</font> <font color=green>[gentle]</font> introduction</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-3">
-        <div data-id="3" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-2">
+        <div data-id="2" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="what-is-a-worker-">What is a Worker?</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-4">
-        <div data-id="4" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-3">
+        <div data-id="3" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="browsers-used-to-run-everything-in-one-thread">Browsers used to run everything in one thread</h3>
 <pre><code class="lang-mermaid">sequenceDiagram
     participant B as 🗔 Browser
@@ -674,8 +658,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-5">
-        <div data-id="5" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-4">
+        <div data-id="4" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="workers-runs-javascript-in-another-thread">Workers runs Javascript in another thread</h3>
 <pre><code class="lang-mermaid">sequenceDiagram
     participant B as 🗔 Browser
@@ -686,8 +670,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-6">
-        <div data-id="6" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-5">
+        <div data-id="5" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="then-uses-events-to-communicate">Then uses events to communicate</h3>
 <pre><code class="lang-mermaid">sequenceDiagram
     participant B as 🗔 Browser
@@ -702,8 +686,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-7">
-        <div data-id="7" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-6">
+        <div data-id="6" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="there-are-three-kind-of-workers">There are three kind of Workers</h3>
 <blockquote>
 <p>All run background scripts independently of any UI</p>
@@ -718,15 +702,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-8">
-        <div data-id="8" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-7">
+        <div data-id="7" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="let-s-talk-about-service-workers">Let&#39;s talk about Service workers</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-9">
-        <div data-id="9" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-8">
+        <div data-id="8" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="definition">Definition</h3>
 <blockquote>
 <p>A service worker acts as a proxy between the browser (your web application) and the network</p>
@@ -762,8 +746,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-10">
-        <div data-id="10" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-9">
+        <div data-id="9" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="it-uses-recent-async-apis">It uses recent async APIs</h3>
 <p>support: chrome, mozilla, android, opera, edge, safari</p>
 <ul>
@@ -776,8 +760,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-11">
-        <div data-id="11" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-10">
+        <div data-id="10" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="runs-under-conditions">Runs under conditions</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <ul>
@@ -790,15 +774,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-12">
-        <div data-id="12" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-11">
+        <div data-id="11" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="how-to-use-it-">How to use it?</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-13">
-        <div data-id="13" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-12">
+        <div data-id="12" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="registration">Registration</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p><code>main.js</code></p>
@@ -809,8 +793,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-14">
-        <div data-id="14" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-13">
+        <div data-id="13" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="first-install">First install</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p><code>service-worker.js</code></p>
@@ -828,8 +812,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-15">
-        <div data-id="15" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-14">
+        <div data-id="14" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="next-visit">Next visit</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <ul>
@@ -847,8 +831,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-16">
-        <div data-id="16" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-15">
+        <div data-id="15" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="upgrade-process">Upgrade process</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p>New Service Worker will wait deactivation of the old one before it activates</p>
@@ -873,8 +857,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-17">
-        <div data-id="17" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-16">
+        <div data-id="16" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="emitted-events">Emitted events</h3>
 <p>Main functional events</p>
 <ul>
@@ -887,8 +871,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-18">
-        <div data-id="18" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-17">
+        <div data-id="17" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="states-events-flow">States &amp; events flow</h3>
 <pre><code class="lang-mermaid">graph LR
     A(&quot;✔ Activated&quot;) --&gt; D{&quot;⌛ Idle&quot;}
@@ -910,15 +894,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-19">
-        <div data-id="19" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-18">
+        <div data-id="18" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="avoid-pitfalls">Avoid pitfalls</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-20">
-        <div data-id="20" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-19">
+        <div data-id="19" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="persistence">Persistence</h3>
 <blockquote>
 <p>You cannot rely on global state within a service worker</p>
@@ -933,8 +917,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-21">
-        <div data-id="21" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-20">
+        <div data-id="20" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="tips">Tips</h3>
 <ul>
 <li>Beware of redirects, credentials, streams</li>
@@ -947,15 +931,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-22">
-        <div data-id="22" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-21">
+        <div data-id="21" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="let-s-go-offline-">Let&#39;s go offline!</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-23">
-        <div data-id="23" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-22">
+        <div data-id="22" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="offline-basics">Offline basics</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p><code>service-worker.js</code></p>
@@ -965,8 +949,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-24">
-        <div data-id="24" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-23">
+        <div data-id="23" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="cache-first-fallback-to-network">Cache first, fallback to network</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p><code>service-worker.js</code> </p>
@@ -976,8 +960,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-25">
-        <div data-id="25" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-24">
+        <div data-id="24" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="caching-strategies">Caching strategies</h3>
 <ul>
 <li>Cache only <small class="fragment">KISS Progressive Web Application</small></li>
@@ -990,15 +974,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-26">
-        <div data-id="26" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-25">
+        <div data-id="25" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="receive-notifications">Receive notifications</h2>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-27">
-        <div data-id="27" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-26">
+        <div data-id="26" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="web-push-notification">Web push notification</h3>
 <ul>
 <li>Used to be complex <small class="fragment">vendor specific implementations</small></li>
@@ -1010,8 +994,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-28">
-        <div data-id="28" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-27">
+        <div data-id="27" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="subscription">Subscription</h3>
 <p>support: chrome, mozilla, android, opera, edge (development), safari (development)</p>
 <p><code>main.js</code></p>
@@ -1023,8 +1007,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-29">
-        <div data-id="29" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-28">
+        <div data-id="28" class="slide-overlay"></div>
         <section class="slide-content"><h2 id="and-more-">And more!</h2>
 <ul>
 <li>Background sync <small class="fragment">wait for stable network connection (backoff)</small></li>
@@ -1036,8 +1020,8 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-30">
-        <div data-id="30" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-29">
+        <div data-id="29" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="thanks-">Thanks!</h3>
 <h4 id="-oodrive-github-io-serviceworker-md-https-oodrive-github-io-serviceworker-md-2-"><a href="https://oodrive.github.io/ServiceWorker.md/#2">oodrive.github.io/ServiceWorker.md</a></h4>
 <ul>
@@ -1053,15 +1037,15 @@ document.currentScript.parentNode.addEventListener('mermaid', event => event.tar
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden" id="slide-31">
-        <div data-id="31" class="slide-overlay"></div>
+      <div class="slide hidden" id="slide-30">
+        <div data-id="30" class="slide-overlay"></div>
         <section class="slide-content"><p><img src="theme/img/feedback.png" alt="feedback"></p>
 </section>
       </div>
     </div>
     <div class="slide-wrapper">
-      <div class="slide hidden  " id="slide-32">
-        <div data-id="32" class="slide-overlay"></div>
+      <div class="slide hidden  " id="slide-31">
+        <div data-id="31" class="slide-overlay"></div>
         <section class="slide-content"><h3 id="life-cycle-example">Life cycle example</h3>
 <pre><code class="lang-mermaid">sequenceDiagram
     participant B as 🗔 Browser
@@ -1087,6 +1071,13 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
     event.target.querySelectorAll('line[stroke-width][marker-end]').forEach((line, index) => index % 2 || (line.x2.baseVal.value -= 5))
 })
 </script></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-32">
+        <div data-id="32" class="slide-overlay"></div>
+        <section class="slide-content"><p><img src="theme/img/partners.png" alt="partners"></p>
+</section>
       </div>
     </div>
     <div class="slide-wrapper">

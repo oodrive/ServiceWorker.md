@@ -9,10 +9,6 @@ output: index.html
 
 --
 
-![partners](theme/img/partners.png)
-
---
-
 # Service Worker
 
 ## <font color=red>A</font> <font color=green>[gentle]</font> introduction
@@ -458,3 +454,7 @@ document.currentScript.parentNode.addEventListener('mermaid', event => {
 	event.target.querySelectorAll('line[stroke-width][marker-end]').forEach((line, index) => index % 2 || (line.x2.baseVal.value -= 5))
 })
 </script>
+
+--
+
+![partners](theme/img/partners.png)
