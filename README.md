@@ -4,7 +4,7 @@ author:
   url: https://oodrive.com
   email: a.gibrat@oodrive.com
 theme: ./theme
-controls: false
+controls: true
 output: index.html
 
 --
